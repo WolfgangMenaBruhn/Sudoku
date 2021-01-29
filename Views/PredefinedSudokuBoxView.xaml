@@ -14,7 +14,9 @@
             Command="{Binding ClickCommand}"
             FontSize="36" 
             BorderBrush="Black" BorderThickness="1" 
-            Foreground="Black" />
+            Foreground="Black"
+            Background="White"
+            />
     </Grid>
     
 </catel:UserControl>
