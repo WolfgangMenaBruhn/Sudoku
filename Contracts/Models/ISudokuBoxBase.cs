@@ -7,5 +7,7 @@ namespace Sudoku.Contracts.Models
         SudokuBoxState State { get; }
 
         SudokuBoxCoordinate Coordinate { get; }
+
+        SudokuBoxCoordinate ParentCoordinate { get; }
     }
 }

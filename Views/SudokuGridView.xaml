@@ -5,6 +5,12 @@
                    xmlns:viewModels="clr-namespace:Sudoku.ViewModels"
                    xmlns:views="clr-namespace:Sudoku.Views">
 
+    <UserControl.Resources>
+        <DataTemplate x:Key="GridPartTemplate" DataType="{x:Type viewModels:SudokuGridPartViewModel}">
+            <views:SudokuGridPartView />
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -17,8 +23,8 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <Border BorderBrush="Black" BorderThickness="2">
-            <Grid Grid.Row="0" Grid.Column="0">
+        <Border Grid.Row="0" Grid.Column="0" BorderBrush="Black" BorderThickness="2">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -29,19 +35,42 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <ContentPresenter Grid.Row="0" Grid.Column="0" Content="{Binding ViewBoxModel_1_1}">
-                    <ContentPresenter.Resources>
-                        <DataTemplate DataType="{x:Type viewModels:PredefinedSudokuBoxViewModel}">
-                            <views:PredefinedSudokuBoxView />
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:NoteSudokuBoxViewModel}">
-                            <views:NoteSudokuBoxView />
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:UserFilledSudokuBoxViewModel}">
-                            <views:UserFilledSudokuBoxView />
-                        </DataTemplate>
-                    </ContentPresenter.Resources>
-                </ContentPresenter>
+                <ContentPresenter
+                    Grid.Row="0" Grid.Column="0"
+                    Content="{Binding ViewBoxModel_1}"
+                    ContentTemplate="{Binding Source={StaticResource GridPartTemplate}}" />
+                <ContentPresenter
+                    Grid.Row="0" Grid.Column="1"
+                    Content="{Binding ViewBoxModel_2}"
+                    ContentTemplate="{Binding Source={StaticResource GridPartTemplate}}" />
+                <ContentPresenter
+                    Grid.Row="0" Grid.Column="2"
+                    Content="{Binding ViewBoxModel_3}"
+                    ContentTemplate="{Binding Source={StaticResource GridPartTemplate}}" />
+                <ContentPresenter
+                    Grid.Row="1" Grid.Column="0"
+                    Content="{Binding ViewBoxModel_4}"
+                    ContentTemplate="{Binding Source={StaticResource GridPartTemplate}}" />
+                <ContentPresenter
+                    Grid.Row="1" Grid.Column="1"
+                    Content="{Binding ViewBoxModel_5}"
+                    ContentTemplate="{Binding Source={StaticResource GridPartTemplate}}" />
+                <ContentPresenter
+                    Grid.Row="1" Grid.Column="2"
+                    Content="{Binding ViewBoxModel_6}"
+                    ContentTemplate="{Binding Source={StaticResource GridPartTemplate}}" />
+                <ContentPresenter
+                    Grid.Row="2" Grid.Column="0"
+                    Content="{Binding ViewBoxModel_7}"
+                    ContentTemplate="{Binding Source={StaticResource GridPartTemplate}}" />
+                <ContentPresenter
+                    Grid.Row="2" Grid.Column="1"
+                    Content="{Binding ViewBoxModel_8}"
+                    ContentTemplate="{Binding Source={StaticResource GridPartTemplate}}" />
+                <ContentPresenter
+                    Grid.Row="2" Grid.Column="2"
+                    Content="{Binding ViewBoxModel_9}"
+                    ContentTemplate="{Binding Source={StaticResource GridPartTemplate}}" />
             </Grid>
         </Border>
     </Grid>

@@ -10,10 +10,14 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <Button Grid.Row="0" Command="{Binding NewGameCommand}">New Game</Button>
+        <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding NewGameCommand}">New Game</Button>
 
-        <WrapPanel Grid.Row="1" Orientation="Horizontal">
+        <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
             <Label>Mode:</Label>
             <ComboBox
                 ItemsSource="{Binding ControlSudokuModes}"
@@ -22,27 +26,7 @@
                 SelectedValue="{Binding ControlSudokuMode, Mode=TwoWay}" />
         </WrapPanel>
 
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <views:PredefinedSudokuBoxView Grid.Row="0" Grid.Column="0" DataContext="{Binding Box1}" />
-            <views:PredefinedSudokuBoxView Grid.Row="0" Grid.Column="1" DataContext="{Binding Box2}" />
-            <views:PredefinedSudokuBoxView Grid.Row="0" Grid.Column="2" DataContext="{Binding Box3}" />
-            <views:PredefinedSudokuBoxView Grid.Row="1" Grid.Column="0" DataContext="{Binding Box4}" />
-            <views:PredefinedSudokuBoxView Grid.Row="1" Grid.Column="1" DataContext="{Binding Box5}" />
-            <views:PredefinedSudokuBoxView Grid.Row="1" Grid.Column="2" DataContext="{Binding Box6}" />
-            <views:PredefinedSudokuBoxView Grid.Row="2" Grid.Column="0" DataContext="{Binding Box7}" />
-            <views:PredefinedSudokuBoxView Grid.Row="2" Grid.Column="1" DataContext="{Binding Box8}" />
-            <views:PredefinedSudokuBoxView Grid.Row="2" Grid.Column="2" DataContext="{Binding Box9}" />
-        </Grid>
+        <views:SudokuGridPartView Grid.Row="2" Grid.Column="0" DataContext="{Binding ControlGrid}" />
     </Grid>
     
 </catel:UserControl>

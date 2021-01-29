@@ -1,11 +1,11 @@
-﻿using Sudoku.Contracts;
-using Sudoku.Contracts.Models;
+﻿using Sudoku.Contracts.Models;
 
 namespace Sudoku.Models
 {
     public class UserFilledSudokuBox : SudokuBoxBase, IUserFilledSudokuBox
     {
-        public UserFilledSudokuBox(SudokuBoxCoordinate coordinate, SudokuBoxNumbers? number) : base(coordinate, SudokuBoxState.UserFilled)
+        public UserFilledSudokuBox(SudokuBoxCoordinate coordinate, SudokuBoxCoordinate parentCoordinate, SudokuBoxNumbers? number)
+            : base(coordinate, parentCoordinate, SudokuBoxState.UserFilled)
         {
             Number = number;
         }

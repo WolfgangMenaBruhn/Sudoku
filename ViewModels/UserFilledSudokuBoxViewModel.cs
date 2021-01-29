@@ -1,13 +1,19 @@
 ﻿using System;
 using Catel.MVVM;
 using Sudoku.Contracts.Models;
+using Sudoku.Contracts.Services;
 
 namespace Sudoku.ViewModels
 {
     public class UserFilledSudokuBoxViewModel : BaseSudokuBoxViewModel
     {
-        public UserFilledSudokuBoxViewModel(IUserFilledSudokuBox model)
+        private readonly ISudokuService mSudokuService;
+
+        public UserFilledSudokuBoxViewModel(
+            IUserFilledSudokuBox model,
+            ISudokuService sudokuService)
         {
+            mSudokuService = sudokuService;
             Model = model ?? throw new ArgumentNullException(nameof(model));
         }
 
@@ -19,5 +25,23 @@ namespace Sudoku.ViewModels
         }
 
         public string Number => Model.Number == null ? string.Empty : ((int) Model.Number).ToString();
+
+        #region click command
+
+        private Command mClickCommand;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command ClickCommand =>
+            mClickCommand ??
+            (mClickCommand =
+                new Command(
+                    ExecuteClickCommand));
+
+        private void ExecuteClickCommand()
+        {
+            mSudokuService.ChangeUserDefinedNumberToPredefinedNumber(Model);
+        }
+
+        #endregion
     }
 }

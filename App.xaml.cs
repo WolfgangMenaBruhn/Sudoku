@@ -1,7 +1,4 @@
-﻿using Catel.IoC;
-using Catel.Logging;
-using Catel.Reflection;
-using Catel.Windows;
+﻿using Catel.Logging;
 using System.Windows;
 
 namespace Sudoku

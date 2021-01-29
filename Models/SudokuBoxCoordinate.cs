@@ -12,5 +12,15 @@
         
         public SudokuBoxNumbers Y { get; }
 
+        public override bool Equals(object other)
+        {
+            if (!(other is SudokuBoxCoordinate otherCoordinate)) return false;
+            return otherCoordinate.X == X && otherCoordinate.Y == Y;
+        }
+
+        public override int GetHashCode()
+        {
+            return (X, Y).GetHashCode();
+        }
     }
 }

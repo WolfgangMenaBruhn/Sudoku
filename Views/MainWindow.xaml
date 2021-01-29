@@ -5,16 +5,9 @@
               xmlns:views="clr-namespace:Sudoku.Views"
               ResizeMode="CanResize">
 
-     <Grid x:Name="LayoutRoot">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <WrapPanel Orientation="Horizontal">
-            <views:ControlSudokuView />
-        </WrapPanel>
-        
-    </Grid>
+    <WrapPanel Orientation="Horizontal">
+        <views:ControlSudokuView />
+        <views:SudokuGridView />
+    </WrapPanel>
     
 </catel:Window>

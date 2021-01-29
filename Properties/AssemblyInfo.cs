@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Resources;
-using System.Runtime.CompilerServices;
 
 [assembly: AssemblyTitle("Sudoku")]
 [assembly: AssemblyProduct("Sudoku")]

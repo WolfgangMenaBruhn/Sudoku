@@ -1,17 +1,25 @@
 ﻿using System.Collections.Generic;
 using Catel.MVVM;
 using System.Threading.Tasks;
-using Sudoku.Models;
+using Sudoku.Contracts.Services;
 
 namespace Sudoku.ViewModels
 {
     public class ControlSudokuViewModel : ViewModelBase
     {
-        private readonly List<PredefinedSudokuBoxViewModel> mPredefinedSudokuBoxes = new List<PredefinedSudokuBoxViewModel>();
-        
-        public ControlSudokuViewModel()
+        private SudokuGridPartViewModel mControlGridPartViewModel;
+        private readonly IModelsFactoryService mModelsFactoryService;
+        private readonly ISudokuService mSudokuService;
+
+        public ControlSudokuViewModel(
+            IModelsFactoryService modelsFactoryService,
+            ISudokuService sudokuService)
         {
-            InitializePredefinedSudokuBoxes();
+            mModelsFactoryService = modelsFactoryService;
+            mSudokuService = sudokuService;
+
+            ControlSudokuMode = ControlSudokuMode.PreDefining;
+            InitializeControlGrid();
         }
 
         #region new game command
@@ -35,13 +43,17 @@ namespace Sudoku.ViewModels
 
         #region mode
 
-        private ControlSudokuMode mControlSudokuMode = ControlSudokuMode.PreDefining;
+        private ControlSudokuMode mControlSudokuMode;
         
         // ReSharper disable once ConvertToAutoProperty
         public ControlSudokuMode ControlSudokuMode
         {
             get => mControlSudokuMode;
-            set => mControlSudokuMode = value;
+            set
+            {
+                mControlSudokuMode = value;
+                mSudokuService.SetMode(value);
+            }
         }
 
         public Dictionary<ControlSudokuMode, string> ControlSudokuModes { get; } =
@@ -56,90 +68,16 @@ namespace Sudoku.ViewModels
 
         #region predefined boxes
 
-        private void InitializePredefinedSudokuBoxes()
+        private void InitializeControlGrid()
         {
-            mPredefinedSudokuBoxes.Add(
-                new PredefinedSudokuBoxViewModel(
-                        new PredefinedSudokuBox(
-                            new SudokuBoxCoordinate(
-                                SudokuBoxNumbers.One, 
-                                SudokuBoxNumbers.One),
-                    SudokuBoxNumbers.One)));
-
-            mPredefinedSudokuBoxes.Add(
-                new PredefinedSudokuBoxViewModel(
-                    new PredefinedSudokuBox(
-                        new SudokuBoxCoordinate(
-                            SudokuBoxNumbers.One,
-                            SudokuBoxNumbers.Two),
-                        SudokuBoxNumbers.Two)));
-
-            mPredefinedSudokuBoxes.Add(
-                new PredefinedSudokuBoxViewModel(
-                    new PredefinedSudokuBox(
-                        new SudokuBoxCoordinate(
-                            SudokuBoxNumbers.One,
-                            SudokuBoxNumbers.Three),
-                        SudokuBoxNumbers.Three)));
-
-            mPredefinedSudokuBoxes.Add(
-                new PredefinedSudokuBoxViewModel(
-                    new PredefinedSudokuBox(
-                        new SudokuBoxCoordinate(
-                            SudokuBoxNumbers.Two,
-                            SudokuBoxNumbers.One),
-                        SudokuBoxNumbers.Four)));
-
-            mPredefinedSudokuBoxes.Add(
-                new PredefinedSudokuBoxViewModel(
-                    new PredefinedSudokuBox(
-                        new SudokuBoxCoordinate(
-                            SudokuBoxNumbers.Two,
-                            SudokuBoxNumbers.Two),
-                        SudokuBoxNumbers.Five)));
-
-            mPredefinedSudokuBoxes.Add(
-                new PredefinedSudokuBoxViewModel(
-                    new PredefinedSudokuBox(
-                        new SudokuBoxCoordinate(
-                            SudokuBoxNumbers.Two,
-                            SudokuBoxNumbers.Three),
-                        SudokuBoxNumbers.Six)));
-
-            mPredefinedSudokuBoxes.Add(
-                new PredefinedSudokuBoxViewModel(
-                    new PredefinedSudokuBox(
-                        new SudokuBoxCoordinate(
-                            SudokuBoxNumbers.Three,
-                            SudokuBoxNumbers.One),
-                        SudokuBoxNumbers.Seven)));
-
-            mPredefinedSudokuBoxes.Add(
-                new PredefinedSudokuBoxViewModel(
-                    new PredefinedSudokuBox(
-                        new SudokuBoxCoordinate(
-                            SudokuBoxNumbers.Three,
-                            SudokuBoxNumbers.Two),
-                        SudokuBoxNumbers.Eight)));
-
-            mPredefinedSudokuBoxes.Add(
-                new PredefinedSudokuBoxViewModel(
-                    new PredefinedSudokuBox(
-                        new SudokuBoxCoordinate(
-                            SudokuBoxNumbers.Three,
-                            SudokuBoxNumbers.Three),
-                        SudokuBoxNumbers.Nine)));
+            mControlGridPartViewModel =
+                new SudokuGridPartViewModel(
+                    mModelsFactoryService.GetNinePredefinedSudokuBoxes(),
+                    mSudokuService,
+                    mModelsFactoryService);
         }
 
-        public PredefinedSudokuBoxViewModel Box1 => mPredefinedSudokuBoxes[0];
-        public PredefinedSudokuBoxViewModel Box2 => mPredefinedSudokuBoxes[1];
-        public PredefinedSudokuBoxViewModel Box3 => mPredefinedSudokuBoxes[2];
-        public PredefinedSudokuBoxViewModel Box4 => mPredefinedSudokuBoxes[3];
-        public PredefinedSudokuBoxViewModel Box5 => mPredefinedSudokuBoxes[4];
-        public PredefinedSudokuBoxViewModel Box6 => mPredefinedSudokuBoxes[5];
-        public PredefinedSudokuBoxViewModel Box7 => mPredefinedSudokuBoxes[6];
-        public PredefinedSudokuBoxViewModel Box8 => mPredefinedSudokuBoxes[7];
-        public PredefinedSudokuBoxViewModel Box9 => mPredefinedSudokuBoxes[8];
+        public SudokuGridPartViewModel ControlGrid => mControlGridPartViewModel;
 
         #endregion
 

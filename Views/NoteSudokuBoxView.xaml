@@ -3,12 +3,30 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://schemas.catelproject.com">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <Border BorderThickness="1" BorderBrush="Black">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Content="{Binding NumberOne}" />
+            <Label Grid.Row="0" Grid.Column="1" Content="{Binding NumberTwo}" />
+            <Label Grid.Row="0" Grid.Column="2" Content="{Binding NumberThree}" />
 
-    </Grid>
-    
+            <Label Grid.Row="1" Grid.Column="0" Content="{Binding NumberFour}" />
+            <Label Grid.Row="1" Grid.Column="1" Content="{Binding NumberFive}" />
+            <Label Grid.Row="1" Grid.Column="2" Content="{Binding NumberSix}" />
+
+            <Label Grid.Row="2" Grid.Column="0" Content="{Binding NumberSeven}" />
+            <Label Grid.Row="2" Grid.Column="1" Content="{Binding NumberEight}" />
+            <Label Grid.Row="2" Grid.Column="2" Content="{Binding NumberNine}" />
+        </Grid>
+    </Border>
+
 </catel:UserControl>

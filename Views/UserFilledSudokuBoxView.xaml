@@ -6,8 +6,15 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
+        <Button
+            MinHeight="36" MinWidth="36"
+            Content="{Binding Number}"
+            Command="{Binding ClickCommand}"
+            FontSize="36"
+            BorderBrush="Black" BorderThickness="1"
+            Foreground="Aqua" />
 
     </Grid>
     
