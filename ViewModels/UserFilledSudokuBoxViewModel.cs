@@ -43,5 +43,12 @@ namespace Sudoku.ViewModels
         }
 
         #endregion
+
+        // ReSharper disable once UnusedMember.Local
+        private new void RefreshValues()
+        {
+            base.RefreshValues();
+            RaisePropertyChanged(nameof(Number));
+        }
     }
 }

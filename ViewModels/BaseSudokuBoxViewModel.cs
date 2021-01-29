@@ -12,7 +12,11 @@ namespace Sudoku.ViewModels
 
         public bool IsHighlighted { get; set; }
 
-        //public SudokuBoxCoordinate Coordinate => 
+        protected void RefreshValues()
+        {
+            RaisePropertyChanged(nameof(IsSelected));
+            RaisePropertyChanged(nameof(IsHighlighted));
+        }
 
         public override string Title => "View model title";
 

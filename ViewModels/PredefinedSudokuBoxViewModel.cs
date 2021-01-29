@@ -56,8 +56,9 @@ namespace Sudoku.ViewModels
             RefreshValues();
         }
 
-        private void RefreshValues()
+        private new void RefreshValues()
         {
+            base.RefreshValues();
             RaisePropertyChanged(nameof(Number));
         }
     }

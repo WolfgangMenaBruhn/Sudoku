@@ -14,9 +14,18 @@
             Command="{Binding ClickCommand}"
             FontSize="36" 
             BorderBrush="Black" BorderThickness="1" 
-            Foreground="Black"
-            Background="White"
-            />
+            Foreground="Black">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="White" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsSelected}" Value="True">
+                            <Setter Property="Background" Value="Gray" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
     </Grid>
     
 </catel:UserControl>
