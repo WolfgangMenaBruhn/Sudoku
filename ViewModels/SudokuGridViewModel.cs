@@ -19,6 +19,14 @@ namespace Sudoku.ViewModels
             mModelsFactoryService = modelsFactoryService;
             mSudokuService = sudokuService;
             InitializeSudokuBoxViewModels();
+
+            mSudokuService.ResetRequest += OnResetRequested;
+        }
+
+        private void OnResetRequested()
+        {
+            InitializeSudokuBoxViewModels();
+            RefreshValues();
         }
 
         private void InitializeSudokuBoxViewModels()
@@ -44,6 +52,19 @@ namespace Sudoku.ViewModels
 
         #endregion
 
+        private void RefreshValues()
+        {
+            RaisePropertyChanged(nameof(ViewBoxModel_1));
+            RaisePropertyChanged(nameof(ViewBoxModel_2));
+            RaisePropertyChanged(nameof(ViewBoxModel_3));
+            RaisePropertyChanged(nameof(ViewBoxModel_4));
+            RaisePropertyChanged(nameof(ViewBoxModel_5));
+            RaisePropertyChanged(nameof(ViewBoxModel_6));
+            RaisePropertyChanged(nameof(ViewBoxModel_7));
+            RaisePropertyChanged(nameof(ViewBoxModel_8));
+            RaisePropertyChanged(nameof(ViewBoxModel_9));
+        }
+
         protected override async Task InitializeAsync()
         {
             await base.InitializeAsync();
@@ -51,6 +72,7 @@ namespace Sudoku.ViewModels
 
         protected override async Task CloseAsync()
         {
+            mSudokuService.ResetRequest -= OnResetRequested;
             await base.CloseAsync();
         }
     }

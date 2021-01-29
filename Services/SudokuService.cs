@@ -19,10 +19,17 @@ namespace Sudoku.Services
 
         public event ChangePredefinedToPredefinedNumberRequestedDelegate ChangePredefinedToPredefinedNumberRequest;
 
+        public delegate void ResetDelegate();
+
+        public event ResetDelegate ResetRequest;
+
         public void SetMode(ControlSudokuMode mode)
         {
             if (Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining && mode != ControlSudokuMode.PreDefining)
                 PredefinedNumber = null;
+
+            if (Mode.HasValue && Mode.Value != ControlSudokuMode.PreDefining && mode == ControlSudokuMode.PreDefining)
+                ResetRequest?.Invoke();
             
             Mode = mode;
         }

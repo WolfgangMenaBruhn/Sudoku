@@ -33,5 +33,7 @@ namespace Sudoku.Contracts.Services
 
         bool IsAllowedChangingPredefinedNumber(
             bool isControlContext);
+
+        event SudokuService.ResetDelegate ResetRequest;
     }
 }
