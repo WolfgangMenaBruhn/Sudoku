@@ -35,5 +35,7 @@ namespace Sudoku.Contracts.Services
             bool isControlContext);
 
         event SudokuService.ResetDelegate ResetRequest;
+
+        void NewGameRequested();
     }
 }

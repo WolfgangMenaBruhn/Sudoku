@@ -28,9 +28,6 @@ namespace Sudoku.Services
             if (Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining && mode != ControlSudokuMode.PreDefining)
                 PredefinedNumber = null;
 
-            if (Mode.HasValue && Mode.Value != ControlSudokuMode.PreDefining && mode == ControlSudokuMode.PreDefining)
-                ResetRequest?.Invoke();
-            
             Mode = mode;
         }
 
@@ -71,6 +68,11 @@ namespace Sudoku.Services
                 ChangePredefinedToPredefinedNumberRequest?.Invoke(
                     predefinedSudokuBox,
                     PredefinedNumber.Value);
+        }
+
+        public void NewGameRequested()
+        {
+            ResetRequest?.Invoke();
         }
     }
 }

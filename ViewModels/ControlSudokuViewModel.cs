@@ -36,6 +36,7 @@ namespace Sudoku.ViewModels
         private void ExecuteNewGameCommand()
         {
             ControlSudokuMode = ControlSudokuMode.PreDefining;
+            mSudokuService.NewGameRequested();
             RefreshValues();
         }
 
