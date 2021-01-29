@@ -26,7 +26,6 @@ namespace Sudoku.ViewModels
         private void OnResetRequested()
         {
             InitializeSudokuBoxViewModels();
-            RefreshValues();
         }
 
         private void InitializeSudokuBoxViewModels()
@@ -36,6 +35,8 @@ namespace Sudoku.ViewModels
             var batches = mModelsFactoryService.Get81EmptyUserDefinedSudokuBoxes().Partition(9);
             foreach (var batch in batches)
                 mSudokuBoxViewModels.Add(new SudokuGridPartViewModel(batch, mSudokuService, mModelsFactoryService));
+
+            RefreshValues();
         }
 
         #region view box models
