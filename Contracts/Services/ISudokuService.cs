@@ -24,5 +24,14 @@ namespace Sudoku.Contracts.Services
 
         event SudokuService.ChangeUserDefinedToPredefinedNumberRequestedDelegate
             ChangeUserDefinedToPredefinedNumberRequest;
+
+        void ChangePredefinedNumberToPredefinedNumber(
+            IPredefinedSudokuBox predefinedSudokuBox);
+
+        event SudokuService.ChangePredefinedToPredefinedNumberRequestedDelegate
+            ChangePredefinedToPredefinedNumberRequest;
+
+        bool IsAllowedChangingPredefinedNumber(
+            bool isControlContext);
     }
 }

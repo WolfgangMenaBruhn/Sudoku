@@ -13,6 +13,12 @@ namespace Sudoku.Services
 
         public event ChangeUserDefinedToPredefinedNumberRequestedDelegate ChangeUserDefinedToPredefinedNumberRequest;
 
+        public delegate void ChangePredefinedToPredefinedNumberRequestedDelegate(
+            IPredefinedSudokuBox userFilledSudokuBox,
+            SudokuBoxNumbers number);
+
+        public event ChangePredefinedToPredefinedNumberRequestedDelegate ChangePredefinedToPredefinedNumberRequest;
+
         public void SetMode(ControlSudokuMode mode)
         {
             if (Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining && mode != ControlSudokuMode.PreDefining)
@@ -39,12 +45,24 @@ namespace Sudoku.Services
         public bool IsAllowedSettingPredefinedNumber(bool isControlContext)
             => isControlContext && Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining;
 
+        public bool IsAllowedChangingPredefinedNumber(bool isControlContext)
+            => !isControlContext && Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining;
+
         public void ChangeUserDefinedNumberToPredefinedNumber(
             IUserFilledSudokuBox userFilledSudokuBox)
         {
             if (userFilledSudokuBox != null && PredefinedNumber.HasValue)
                 ChangeUserDefinedToPredefinedNumberRequest?.Invoke(
                     userFilledSudokuBox,
+                    PredefinedNumber.Value);
+        }
+
+        public void ChangePredefinedNumberToPredefinedNumber(
+            IPredefinedSudokuBox predefinedSudokuBox)
+        {
+            if (predefinedSudokuBox != null && PredefinedNumber.HasValue)
+                ChangePredefinedToPredefinedNumberRequest?.Invoke(
+                    predefinedSudokuBox,
                     PredefinedNumber.Value);
         }
     }

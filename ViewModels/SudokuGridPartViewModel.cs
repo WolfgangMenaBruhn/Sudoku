@@ -31,6 +31,7 @@ namespace Sudoku.ViewModels
 
             InitializeSudokuBoxViewModels();
             mSudokuService.ChangeUserDefinedToPredefinedNumberRequest += OnChangeUserDefinedToPredefinedNumberRequested;
+            mSudokuService.ChangePredefinedToPredefinedNumberRequest += OnChangePredefinedToPredefinedNumberRequested;
         }
 
         private void OnChangeUserDefinedToPredefinedNumberRequested(
@@ -57,6 +58,34 @@ namespace Sudoku.ViewModels
             mSudokuBoxViewModels.Insert(viewModelIndex, newPredefinedViewModel);
 
             RefreshValues();
+        }
+
+        private void OnChangePredefinedToPredefinedNumberRequested(
+            IPredefinedSudokuBox predefinedSudokuBox,
+            SudokuBoxNumbers number)
+        {
+            if (predefinedSudokuBox?.ParentCoordinate == null) return;
+
+            var foundViewModel = FindPredefinedViewModel(predefinedSudokuBox);
+            foundViewModel?.ChangeNumber(number);
+        }
+
+        private PredefinedSudokuBoxViewModel FindPredefinedViewModel(
+            IPredefinedSudokuBox predefinedSudokuBox)
+        {
+            if (predefinedSudokuBox == null) return null;
+
+            foreach (var viewModel in mSudokuBoxViewModels)
+            {
+                if (!(viewModel is PredefinedSudokuBoxViewModel predefinedSudokuBoxViewModel)) continue;
+                if (predefinedSudokuBoxViewModel.Model == null) continue;
+
+                if (predefinedSudokuBoxViewModel.Model.ParentCoordinate.Equals(predefinedSudokuBox.ParentCoordinate) &&
+                    predefinedSudokuBoxViewModel.Model.Coordinate.Equals(predefinedSudokuBox.Coordinate))
+                    return predefinedSudokuBoxViewModel;
+            }
+
+            return null; // Nothing found
         }
 
         private UserFilledSudokuBoxViewModel FindUserDefinedViewModel(
@@ -138,6 +167,7 @@ namespace Sudoku.ViewModels
         protected override async Task CloseAsync()
         {
             mSudokuService.ChangeUserDefinedToPredefinedNumberRequest -= OnChangeUserDefinedToPredefinedNumberRequested;
+            mSudokuService.ChangePredefinedToPredefinedNumberRequest -= OnChangePredefinedToPredefinedNumberRequested;
             await base.CloseAsync();
         }
     }

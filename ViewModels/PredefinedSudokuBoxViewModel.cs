@@ -2,6 +2,7 @@
 using Catel.MVVM;
 using Sudoku.Contracts.Models;
 using Sudoku.Contracts.Services;
+using Sudoku.Models;
 
 namespace Sudoku.ViewModels
 {
@@ -39,10 +40,25 @@ namespace Sudoku.ViewModels
         {
             if (Model != null && mSudokuService.IsAllowedSettingPredefinedNumber(Model.IsForControl))
                 mSudokuService.SetPredefinedNumber(Model.Number);
+
+            if (Model != null && mSudokuService.IsAllowedChangingPredefinedNumber(Model.IsForControl))
+                mSudokuService.ChangePredefinedNumberToPredefinedNumber(Model);
         }
 
         #endregion
 
         public string Number => ((int) Model.Number).ToString();
+
+        public void ChangeNumber(SudokuBoxNumbers newNumber)
+        {
+            if (Model.IsForControl) return; // Not change allowed.
+            Model = Model.WithNumber(newNumber);
+            RefreshValues();
+        }
+
+        private void RefreshValues()
+        {
+            RaisePropertyChanged(nameof(Number));
+        }
     }
 }

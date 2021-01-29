@@ -7,5 +7,7 @@ namespace Sudoku.Contracts.Models
         SudokuBoxNumbers Number { get; }
 
         bool IsForControl { get; }
+
+        PredefinedSudokuBox WithNumber(SudokuBoxNumbers newNumber);
     }
 }
