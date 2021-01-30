@@ -43,6 +43,8 @@ namespace Sudoku.ViewModels
 
             if (Model != null && mSudokuService.IsAllowedChangingPredefinedNumber(Model.IsForControl))
                 mSudokuService.ChangePredefinedNumberToPredefinedNumber(Model);
+
+            mSudokuService.SudokuBoxWasClicked(Model as SudokuBoxBase);
         }
 
         #endregion

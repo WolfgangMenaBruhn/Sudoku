@@ -38,7 +38,7 @@ namespace Sudoku.Services
                     GetPredefinedSudokuBox(
                         currentCoordinate, 
                         dummyCoordinate, 
-                        (SudokuBoxNumbers)(i + 1), 
+                        (SudokuBoxNumbers)(i + 1),
                         true));
             }
 

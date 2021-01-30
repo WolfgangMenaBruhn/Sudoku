@@ -19,7 +19,7 @@
                 <Style TargetType="Button">
                     <Setter Property="Background" Value="White" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Path=IsSelected}" Value="True">
+                        <DataTrigger Binding="{Binding Path=IsSelectedOrHighlighted}" Value="True">
                             <Setter Property="Background" Value="Gray" />
                         </DataTrigger>
                     </Style.Triggers>

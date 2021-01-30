@@ -37,5 +37,9 @@ namespace Sudoku.Contracts.Services
         event SudokuService.ResetDelegate ResetRequest;
 
         void NewGameRequested();
+
+        void SudokuBoxWasClicked(SudokuBoxBase clickedSudokuBox);
+
+        event SudokuService.InformAboutClickedSudokuBoxDelegate InformAboutClickedSudokuBox;
     }
 }

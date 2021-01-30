@@ -32,6 +32,52 @@ namespace Sudoku.ViewModels
             InitializeSudokuBoxViewModels();
             mSudokuService.ChangeUserDefinedToPredefinedNumberRequest += OnChangeUserDefinedToPredefinedNumberRequested;
             mSudokuService.ChangePredefinedToPredefinedNumberRequest += OnChangePredefinedToPredefinedNumberRequested;
+            mSudokuService.InformAboutClickedSudokuBox += OnSudokuBoxWasClicked;
+        }
+
+        private void OnSudokuBoxWasClicked(SudokuBoxBase clickedSudokuBox)
+        {
+            if (clickedSudokuBox == null) return;
+
+            foreach (var viewModel in mSudokuBoxViewModels)
+            {
+                var currentModel = viewModel.GetModel();
+                if (clickedSudokuBox is IPredefinedSudokuBox clickedPredefinedSudokuBoxModel &&
+                    clickedPredefinedSudokuBoxModel.IsForControl)
+                {
+                    if (currentModel is IPredefinedSudokuBox currentPredefinedSudokuBoxModel &&
+                        currentPredefinedSudokuBoxModel.IsForControl)
+                        viewModel.IsSelected =
+                            currentModel.Coordinate.Equals(clickedSudokuBox.Coordinate);
+                }
+                else
+                {
+                    var currentPredefinedSudokuBoxModel = currentModel as IPredefinedSudokuBox;
+                    if (currentPredefinedSudokuBoxModel != null && currentPredefinedSudokuBoxModel.IsForControl)
+                        continue;
+
+                    viewModel.IsSelected =
+                        currentModel.Coordinate.Equals(clickedSudokuBox.Coordinate) &&
+                        currentModel.ParentCoordinate.Equals(clickedSudokuBox.ParentCoordinate);
+
+                    bool isHighlighted = currentModel.ParentCoordinate.Equals(clickedSudokuBox.ParentCoordinate);
+
+                    if (currentModel.ParentCoordinate.X == clickedSudokuBox.ParentCoordinate.X &&
+                        currentModel.Coordinate.X == clickedSudokuBox.Coordinate.X)
+                        isHighlighted = true;
+
+                    if (currentModel.ParentCoordinate.Y == clickedSudokuBox.ParentCoordinate.Y &&
+                        currentModel.Coordinate.Y == clickedSudokuBox.Coordinate.Y)
+                        isHighlighted = true;
+
+                    if (clickedSudokuBox is IPredefinedSudokuBox clickedPredefinedBox &&
+                        currentPredefinedSudokuBoxModel != null &&
+                        currentPredefinedSudokuBoxModel.Number == clickedPredefinedBox.Number)
+                        isHighlighted = true;
+
+                    viewModel.IsHighlighted = isHighlighted;
+                }
+            }
         }
 
         private void OnChangeUserDefinedToPredefinedNumberRequested(
@@ -168,6 +214,7 @@ namespace Sudoku.ViewModels
         {
             mSudokuService.ChangeUserDefinedToPredefinedNumberRequest -= OnChangeUserDefinedToPredefinedNumberRequested;
             mSudokuService.ChangePredefinedToPredefinedNumberRequest -= OnChangePredefinedToPredefinedNumberRequested;
+            mSudokuService.InformAboutClickedSudokuBox -= OnSudokuBoxWasClicked;
             await base.CloseAsync();
         }
     }

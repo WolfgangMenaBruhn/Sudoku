@@ -7,6 +7,8 @@ namespace Sudoku.Services
 {
     public class SudokuService : ISudokuService
     {
+        #region delegates and events
+
         public delegate void ChangeUserDefinedToPredefinedNumberRequestedDelegate(
             IUserFilledSudokuBox userFilledSudokuBox, 
             SudokuBoxNumbers number);
@@ -23,11 +25,15 @@ namespace Sudoku.Services
 
         public event ResetDelegate ResetRequest;
 
+        public delegate void InformAboutClickedSudokuBoxDelegate(
+            SudokuBoxBase clickedSudokuBox);
+
+        public event InformAboutClickedSudokuBoxDelegate InformAboutClickedSudokuBox;
+
+        #endregion
+
         public void SetMode(ControlSudokuMode mode)
         {
-            if (Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining && mode != ControlSudokuMode.PreDefining)
-                PredefinedNumber = null;
-
             Mode = mode;
         }
 
@@ -46,8 +52,7 @@ namespace Sudoku.Services
             protected set => mPredefinedNumber = value;
         }
 
-        public bool IsAllowedSettingPredefinedNumber(bool isControlContext)
-            => isControlContext && Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining;
+        public bool IsAllowedSettingPredefinedNumber(bool isControlContext) => isControlContext;
 
         public bool IsAllowedChangingPredefinedNumber(bool isControlContext)
             => !isControlContext && Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining;
@@ -73,6 +78,11 @@ namespace Sudoku.Services
         public void NewGameRequested()
         {
             ResetRequest?.Invoke();
+        }
+
+        public void SudokuBoxWasClicked(SudokuBoxBase clickedSudokuBox)
+        {
+            InformAboutClickedSudokuBox?.Invoke(clickedSudokuBox);
         }
     }
 }

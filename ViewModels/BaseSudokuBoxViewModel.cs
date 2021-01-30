@@ -12,11 +12,15 @@ namespace Sudoku.ViewModels
 
         public bool IsHighlighted { get; set; }
 
+        public bool IsSelectedOrHighlighted => IsSelected || IsHighlighted;
+
         protected void RefreshValues()
         {
             RaisePropertyChanged(nameof(IsSelected));
             RaisePropertyChanged(nameof(IsHighlighted));
         }
+
+        public ISudokuBoxBase GetModel() => mModel;
 
         public override string Title => "View model title";
 

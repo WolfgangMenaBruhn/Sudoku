@@ -2,6 +2,7 @@
 using Catel.MVVM;
 using Sudoku.Contracts.Models;
 using Sudoku.Contracts.Services;
+using Sudoku.Models;
 
 namespace Sudoku.ViewModels
 {
@@ -40,6 +41,7 @@ namespace Sudoku.ViewModels
         private void ExecuteClickCommand()
         {
             mSudokuService.ChangeUserDefinedNumberToPredefinedNumber(Model);
+            mSudokuService.SudokuBoxWasClicked(Model as SudokuBoxBase);
         }
 
         #endregion
