@@ -8,6 +8,6 @@ namespace Sudoku.Contracts.Models
 
         bool IsForControl { get; }
 
-        PredefinedSudokuBox WithNumber(SudokuBoxNumbers newNumber);
+        IPredefinedSudokuBox WithNumber(SudokuBoxNumbers newNumber);
     }
 }

@@ -14,13 +14,17 @@
             Command="{Binding ClickCommand}"
             FontSize="36"
             BorderBrush="Black" BorderThickness="1"
-            Foreground="Aqua">
+            Foreground="RoyalBlue">
             <Button.Style>
                 <Style TargetType="Button">
                     <Setter Property="Background" Value="White" />
+                    <Setter Property="FontWeight" Value="Normal" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Path=IsSelectedOrHighlighted}" Value="True">
-                            <Setter Property="Background" Value="Gray" />
+                            <Setter Property="Background" Value="Gainsboro" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=IsSameNumber}" Value="True">
+                            <Setter Property="FontWeight" Value="Bold" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

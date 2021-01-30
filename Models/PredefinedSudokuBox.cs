@@ -19,7 +19,7 @@ namespace Sudoku.Models
 
         public bool IsForControl { get; }
 
-        public PredefinedSudokuBox WithNumber(SudokuBoxNumbers newNumber)
+        public IPredefinedSudokuBox WithNumber(SudokuBoxNumbers newNumber)
         {
             return newNumber == Number ? this : new PredefinedSudokuBox(Coordinate, ParentCoordinate, newNumber, IsForControl);
         }

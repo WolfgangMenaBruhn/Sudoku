@@ -15,7 +15,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="{Binding NumberOne}" />
+            <Button Grid.Row="0" Grid.Column="0" Content="{Binding NumberOne}" Command="{Binding ClickNumberOneCommand}"/>
             <Label Grid.Row="0" Grid.Column="1" Content="{Binding NumberTwo}" />
             <Label Grid.Row="0" Grid.Column="2" Content="{Binding NumberThree}" />
 

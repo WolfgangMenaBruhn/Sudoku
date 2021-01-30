@@ -60,7 +60,8 @@ namespace Sudoku.ViewModels
                         currentModel.Coordinate.Equals(clickedSudokuBox.Coordinate) &&
                         currentModel.ParentCoordinate.Equals(clickedSudokuBox.ParentCoordinate);
 
-                    bool isHighlighted = currentModel.ParentCoordinate.Equals(clickedSudokuBox.ParentCoordinate);
+                    var isHighlighted = currentModel.ParentCoordinate.Equals(clickedSudokuBox.ParentCoordinate);
+                    var isSameNumber = false;
 
                     if (currentModel.ParentCoordinate.X == clickedSudokuBox.ParentCoordinate.X &&
                         currentModel.Coordinate.X == clickedSudokuBox.Coordinate.X)
@@ -70,31 +71,43 @@ namespace Sudoku.ViewModels
                         currentModel.Coordinate.Y == clickedSudokuBox.Coordinate.Y)
                         isHighlighted = true;
 
-
                     var currentUserDefinedBox = currentModel as IUserFilledSudokuBox;
                     if (clickedSudokuBox is IPredefinedSudokuBox clickedPredefinedBox)
                     {
                         if (currentPredefinedSudokuBoxModel != null &&
                             currentPredefinedSudokuBoxModel.Number == clickedPredefinedBox.Number)
+                        {
                             isHighlighted = true;
+                            isSameNumber = true;
+                        }
 
-                        if (currentUserDefinedBox?.Number != null && 
+                        if (currentUserDefinedBox?.Number != null &&
                             currentUserDefinedBox.Number.Value == clickedPredefinedBox.Number)
+                        {
                             isHighlighted = true;
+                            isSameNumber = true;
+                        }
                     }
 
                     if (clickedSudokuBox is IUserFilledSudokuBox clickedUserDefinedBox && clickedUserDefinedBox.Number.HasValue)
                     {
                         if (currentPredefinedSudokuBoxModel != null &&
                             currentPredefinedSudokuBoxModel.Number == clickedUserDefinedBox.Number.Value)
+                        {
                             isHighlighted = true;
-                        
+                            isSameNumber = true;
+                        }
+
                         if (currentUserDefinedBox?.Number != null &&
                             currentUserDefinedBox.Number.Value == clickedUserDefinedBox.Number.Value)
+                        {
                             isHighlighted = true;
+                            isSameNumber = true;
+                        }
                     }
 
                     viewModel.IsHighlighted = isHighlighted;
+                    viewModel.IsSameNumber = isSameNumber;
                 }
             }
         }

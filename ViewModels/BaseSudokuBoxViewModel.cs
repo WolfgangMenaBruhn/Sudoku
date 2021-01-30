@@ -14,10 +14,13 @@ namespace Sudoku.ViewModels
 
         public bool IsSelectedOrHighlighted => IsSelected || IsHighlighted;
 
+        public bool IsSameNumber { get; set; }
+
         protected void RefreshValues()
         {
             RaisePropertyChanged(nameof(IsSelected));
             RaisePropertyChanged(nameof(IsHighlighted));
+            RaisePropertyChanged(nameof(IsSameNumber));
         }
 
         public ISudokuBoxBase GetModel() => mModel;

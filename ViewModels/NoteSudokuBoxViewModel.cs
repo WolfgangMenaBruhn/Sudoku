@@ -28,5 +28,23 @@ namespace Sudoku.ViewModels
         public string NumberSeven => Model.Numbers.Contains(Models.SudokuBoxNumbers.Seven) ? "7" : string.Empty;
         public string NumberEight => Model.Numbers.Contains(Models.SudokuBoxNumbers.Eight) ? "8" : string.Empty;
         public string NumberNine => Model.Numbers.Contains(Models.SudokuBoxNumbers.Nine) ? "9" : string.Empty;
+
+        #region click number one command
+
+        private Command mClickNumberOneCommand;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command ClickNumberOneCommand =>
+            mClickNumberOneCommand ??
+            (mClickNumberOneCommand =
+                new Command(
+                    ExecuteNumberOneClickCommand));
+
+        private void ExecuteNumberOneClickCommand()
+        {
+            Model = Model.WithOrWithoutNumber(Models.SudokuBoxNumbers.One);
+        }
+
+        #endregion
     }
 }
