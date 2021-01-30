@@ -53,7 +53,7 @@ namespace Sudoku.ViewModels
 
         public void ChangeNumber(SudokuBoxNumbers newNumber)
         {
-            if (Model.IsForControl) return; // Not change allowed.
+            if (Model.IsForControl) return; // change not allowed.
             Model = Model.WithNumber(newNumber);
             RefreshValues();
         }

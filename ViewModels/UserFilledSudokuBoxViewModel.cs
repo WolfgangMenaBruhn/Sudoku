@@ -40,7 +40,18 @@ namespace Sudoku.ViewModels
 
         private void ExecuteClickCommand()
         {
-            mSudokuService.ChangeUserDefinedNumberToPredefinedNumber(Model);
+            if (mSudokuService.IsAllowedChangingUserDefinedNumberToPredefinedNumber())
+                mSudokuService.ChangeUserDefinedNumberToPredefinedNumber(Model);
+
+            if (mSudokuService.IsAllowedSettingUserDefinedNumber())
+            {
+                if (mSudokuService.PredefinedNumber.HasValue)
+                {
+                    Model = Model.WithNumber(mSudokuService.PredefinedNumber.Value);
+                    RefreshValues();
+                }
+            }
+
             mSudokuService.SudokuBoxWasClicked(Model as SudokuBoxBase);
         }
 

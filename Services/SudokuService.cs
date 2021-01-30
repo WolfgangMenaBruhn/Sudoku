@@ -44,18 +44,15 @@ namespace Sudoku.Services
             PredefinedNumber = predefinedNumber;
         }
 
-        private SudokuBoxNumbers? mPredefinedNumber;
-
-        public SudokuBoxNumbers? PredefinedNumber
-        {
-            get => Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining ? mPredefinedNumber : null;
-            protected set => mPredefinedNumber = value;
-        }
+        public SudokuBoxNumbers? PredefinedNumber { get; protected set; }
 
         public bool IsAllowedSettingPredefinedNumber(bool isControlContext) => isControlContext;
 
         public bool IsAllowedChangingPredefinedNumber(bool isControlContext)
             => !isControlContext && Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining;
+
+        public bool IsAllowedSettingUserDefinedNumber(bool isControlContext)
+            => !isControlContext && Mode.HasValue && Mode.Value == ControlSudokuMode.UserDefining;
 
         public void ChangeUserDefinedNumberToPredefinedNumber(
             IUserFilledSudokuBox userFilledSudokuBox)
@@ -66,12 +63,19 @@ namespace Sudoku.Services
                     PredefinedNumber.Value);
         }
 
+        public bool IsAllowedChangingUserDefinedNumberToPredefinedNumber() 
+            => PredefinedNumber.HasValue && Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining;
+
+        public bool IsAllowedSettingUserDefinedNumber()
+            => PredefinedNumber.HasValue && Mode.HasValue && Mode.Value == ControlSudokuMode.UserDefining;
+
         public void ChangePredefinedNumberToPredefinedNumber(
             IPredefinedSudokuBox predefinedSudokuBox)
         {
-            if (predefinedSudokuBox != null && PredefinedNumber.HasValue)
+            if (predefinedSudokuBox != null && IsAllowedChangingUserDefinedNumberToPredefinedNumber())
                 ChangePredefinedToPredefinedNumberRequest?.Invoke(
                     predefinedSudokuBox,
+                    // ReSharper disable once PossibleInvalidOperationException
                     PredefinedNumber.Value);
         }
 

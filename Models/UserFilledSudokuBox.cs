@@ -11,5 +11,10 @@ namespace Sudoku.Models
         }
 
         public SudokuBoxNumbers? Number { get; }
+
+        public UserFilledSudokuBox WithNumber(SudokuBoxNumbers newNumber)
+        {
+            return newNumber == Number ? this : new UserFilledSudokuBox(Coordinate, ParentCoordinate, newNumber);
+        }
     }
 }

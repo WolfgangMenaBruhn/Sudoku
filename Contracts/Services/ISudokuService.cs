@@ -19,6 +19,10 @@ namespace Sudoku.Contracts.Services
         bool IsAllowedSettingPredefinedNumber(
             bool isControlContext);
 
+        bool IsAllowedChangingUserDefinedNumberToPredefinedNumber();
+
+        bool IsAllowedSettingUserDefinedNumber();
+
         void ChangeUserDefinedNumberToPredefinedNumber(
             IUserFilledSudokuBox userFilledSudokuBox);
 
@@ -32,6 +36,9 @@ namespace Sudoku.Contracts.Services
             ChangePredefinedToPredefinedNumberRequest;
 
         bool IsAllowedChangingPredefinedNumber(
+            bool isControlContext);
+
+        bool IsAllowedSettingUserDefinedNumber(
             bool isControlContext);
 
         event SudokuService.ResetDelegate ResetRequest;

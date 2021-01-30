@@ -70,10 +70,29 @@ namespace Sudoku.ViewModels
                         currentModel.Coordinate.Y == clickedSudokuBox.Coordinate.Y)
                         isHighlighted = true;
 
-                    if (clickedSudokuBox is IPredefinedSudokuBox clickedPredefinedBox &&
-                        currentPredefinedSudokuBoxModel != null &&
-                        currentPredefinedSudokuBoxModel.Number == clickedPredefinedBox.Number)
-                        isHighlighted = true;
+
+                    var currentUserDefinedBox = currentModel as IUserFilledSudokuBox;
+                    if (clickedSudokuBox is IPredefinedSudokuBox clickedPredefinedBox)
+                    {
+                        if (currentPredefinedSudokuBoxModel != null &&
+                            currentPredefinedSudokuBoxModel.Number == clickedPredefinedBox.Number)
+                            isHighlighted = true;
+
+                        if (currentUserDefinedBox?.Number != null && 
+                            currentUserDefinedBox.Number.Value == clickedPredefinedBox.Number)
+                            isHighlighted = true;
+                    }
+
+                    if (clickedSudokuBox is IUserFilledSudokuBox clickedUserDefinedBox && clickedUserDefinedBox.Number.HasValue)
+                    {
+                        if (currentPredefinedSudokuBoxModel != null &&
+                            currentPredefinedSudokuBoxModel.Number == clickedUserDefinedBox.Number.Value)
+                            isHighlighted = true;
+                        
+                        if (currentUserDefinedBox?.Number != null &&
+                            currentUserDefinedBox.Number.Value == clickedUserDefinedBox.Number.Value)
+                            isHighlighted = true;
+                    }
 
                     viewModel.IsHighlighted = isHighlighted;
                 }
@@ -110,7 +129,7 @@ namespace Sudoku.ViewModels
             IPredefinedSudokuBox predefinedSudokuBox,
             SudokuBoxNumbers number)
         {
-            if (predefinedSudokuBox?.ParentCoordinate == null) return;
+            if (predefinedSudokuBox == null) return;
 
             var foundViewModel = FindPredefinedViewModel(predefinedSudokuBox);
             foundViewModel?.ChangeNumber(number);
