@@ -44,9 +44,8 @@ namespace Sudoku.Services
 
         public void ConsiderControlPressedKey(SudokuBoxNumbers? number)
         {
-
-            if (mSudokuSubGridPointer > 8) mSudokuSubGridPointer = -1;
-            if (mSudokuMainGridPointer > 8) mSudokuMainGridPointer = -1;
+            if (mSudokuSubGridPointer == 8 && mSudokuMainGridPointer == 8) 
+                return; // Only one run for each game
 
             var sudokuSubGridPointerCopy = ++mSudokuSubGridPointer;
             if (mSudokuSubGridPointer == 9)
@@ -122,6 +121,9 @@ namespace Sudoku.Services
         public void NewGameRequested()
         {
             ResetRequest?.Invoke();
+
+            mSudokuMainGridPointer = 0;
+            mSudokuSubGridPointer = -1;
         }
 
         public void SudokuBoxWasClicked(SudokuBoxBase clickedSudokuBox)
