@@ -42,6 +42,186 @@ namespace Sudoku.ViewModels
 
         #endregion
 
+        #region Key 0 command
+
+        private Command mKey0Command;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command Key0Command =>
+            mKey0Command ??
+            (mKey0Command =
+                new Command(
+                    ExecuteKey0Command));
+
+        private void ExecuteKey0Command()
+        {
+            mSudokuService.ConsiderControlPressedKey(null);
+        }
+
+        #endregion
+
+        #region Key 1 command
+
+        private Command mKey1Command;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command Key1Command =>
+            mKey1Command ??
+            (mKey1Command =
+                new Command(
+                    ExecuteKey1Command));
+
+        private void ExecuteKey1Command()
+        {
+            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.One);
+        }
+
+        #endregion
+
+        #region Key 2 command
+
+        private Command mKey2Command;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command Key2Command =>
+            mKey2Command ??
+            (mKey2Command =
+                new Command(
+                    ExecuteKey2Command));
+
+        private void ExecuteKey2Command()
+        {
+            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Two);
+        }
+
+        #endregion
+
+        #region Key 3 command
+
+        private Command mKey3Command;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command Key3Command =>
+            mKey3Command ??
+            (mKey3Command =
+                new Command(
+                    ExecuteKey3Command));
+
+        private void ExecuteKey3Command()
+        {
+            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Three);
+        }
+
+        #endregion
+
+        #region Key 4 command
+
+        private Command mKey4Command;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command Key4Command =>
+            mKey4Command ??
+            (mKey4Command =
+                new Command(
+                    ExecuteKey4Command));
+
+        private void ExecuteKey4Command()
+        {
+            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Four);
+        }
+
+        #endregion
+
+        #region Key 5 command
+
+        private Command mKey5Command;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command Key5Command =>
+            mKey5Command ??
+            (mKey5Command =
+                new Command(
+                    ExecuteKey5Command));
+
+        private void ExecuteKey5Command()
+        {
+            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Five);
+        }
+
+        #endregion
+
+        #region Key 6 command
+
+        private Command mKey6Command;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command Key6Command =>
+            mKey6Command ??
+            (mKey6Command =
+                new Command(
+                    ExecuteKey6Command));
+
+        private void ExecuteKey6Command()
+        {
+            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Six);
+        }
+
+        #endregion
+
+        #region Key 7 command
+
+        private Command mKey7Command;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command Key7Command =>
+            mKey7Command ??
+            (mKey7Command =
+                new Command(
+                    ExecuteKey7Command));
+
+        private void ExecuteKey7Command()
+        {
+            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Seven);
+        }
+
+        #endregion
+
+        #region Key 8 command
+
+        private Command mKey8Command;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command Key8Command =>
+            mKey8Command ??
+            (mKey8Command =
+                new Command(
+                    ExecuteKey8Command));
+
+        private void ExecuteKey8Command()
+        {
+            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Eight);
+        }
+
+        #endregion
+
+        #region Key 9 command
+
+        private Command mKey9Command;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command Key9Command =>
+            mKey9Command ??
+            (mKey9Command =
+                new Command(
+                    ExecuteKey9Command));
+
+        private void ExecuteKey9Command()
+        {
+            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Nine);
+        }
+
+        #endregion
+
         #region mode
 
         private ControlSudokuMode mControlSudokuMode;

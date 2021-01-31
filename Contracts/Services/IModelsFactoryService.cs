@@ -15,5 +15,7 @@ namespace Sudoku.Contracts.Services
             bool isForControl = false);
 
         IEnumerable<IUserFilledSudokuBox> Get81EmptyUserDefinedSudokuBoxes();
+
+        SudokuBoxCoordinate GetSudokuBoxCoordinate(int x, int y);
     }
 }

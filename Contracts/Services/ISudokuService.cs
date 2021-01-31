@@ -48,5 +48,7 @@ namespace Sudoku.Contracts.Services
         void SudokuBoxWasClicked(SudokuBoxBase clickedSudokuBox);
 
         event SudokuService.InformAboutClickedSudokuBoxDelegate InformAboutClickedSudokuBox;
+
+        void ConsiderControlPressedKey(SudokuBoxNumbers? number);
     }
 }

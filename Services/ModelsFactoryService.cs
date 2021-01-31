@@ -8,7 +8,7 @@ namespace Sudoku.Services
 {
     public class ModelsFactoryService : IModelsFactoryService
     {
-        private SudokuBoxCoordinate GetSudokuBoxCoordinate(int x, int y)
+        public SudokuBoxCoordinate GetSudokuBoxCoordinate(int x, int y)
         {
             if (x < 1 || x > 9) throw new ArgumentOutOfRangeException(nameof(x));
             if (y < 1 || y > 9) throw new ArgumentOutOfRangeException(nameof(y));

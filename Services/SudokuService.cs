@@ -7,6 +7,16 @@ namespace Sudoku.Services
 {
     public class SudokuService : ISudokuService
     {
+        private int mSudokuMainGridPointer;
+        private int mSudokuSubGridPointer = -1;
+        private readonly IModelsFactoryService mModelsFactory;
+
+        public SudokuService(
+            IModelsFactoryService modelsFactory)
+        {
+            mModelsFactory = modelsFactory;
+        }
+
         #region delegates and events
 
         public delegate void ChangeUserDefinedToPredefinedNumberRequestedDelegate(
@@ -31,6 +41,36 @@ namespace Sudoku.Services
         public event InformAboutClickedSudokuBoxDelegate InformAboutClickedSudokuBox;
 
         #endregion
+
+        public void ConsiderControlPressedKey(SudokuBoxNumbers? number)
+        {
+
+            if (mSudokuSubGridPointer > 8) mSudokuSubGridPointer = -1;
+            if (mSudokuMainGridPointer > 8) mSudokuMainGridPointer = -1;
+
+            var sudokuSubGridPointerCopy = ++mSudokuSubGridPointer;
+            if (mSudokuSubGridPointer == 9)
+            {
+                mSudokuMainGridPointer++;
+                mSudokuSubGridPointer = 0;
+                sudokuSubGridPointerCopy = 0;
+            }
+
+            if (number == null) return;
+
+            var parentX = mSudokuMainGridPointer / 3 + 1;
+            var parentY = mSudokuMainGridPointer % 3 + 1;
+
+            var x = sudokuSubGridPointerCopy / 3 + 1;
+            var y = sudokuSubGridPointerCopy % 3 + 1;
+
+            ChangeUserDefinedToPredefinedNumberRequest?.Invoke(
+                new UserFilledSudokuBox(
+                    mModelsFactory.GetSudokuBoxCoordinate(x, y),
+                    mModelsFactory.GetSudokuBoxCoordinate(parentX, parentY),
+                    null),
+                number.Value);
+        }
 
         public void SetMode(ControlSudokuMode mode)
         {

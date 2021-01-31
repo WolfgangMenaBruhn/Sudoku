@@ -26,7 +26,24 @@
                 SelectedValue="{Binding ControlSudokuMode, Mode=TwoWay}" />
         </WrapPanel>
 
-        <views:SudokuGridPartView Grid.Row="2" Grid.Column="0" DataContext="{Binding ControlGrid}" />
+        <WrapPanel Grid.Row="2" Grid.Column="0">
+            <WrapPanel.InputBindings>
+                <KeyBinding Key="NumPad0" Command="{Binding Key0Command}" />
+                <KeyBinding Key="NumPad1" Command="{Binding Key1Command}" />
+                <KeyBinding Key="NumPad2" Command="{Binding Key2Command}" />
+                <KeyBinding Key="NumPad3" Command="{Binding Key3Command}" />
+                <KeyBinding Key="NumPad4" Command="{Binding Key4Command}" />
+                <KeyBinding Key="NumPad5" Command="{Binding Key5Command}" />
+                <KeyBinding Key="NumPad6" Command="{Binding Key6Command}" />
+                <KeyBinding Key="NumPad7" Command="{Binding Key7Command}" />
+                <KeyBinding Key="NumPad8" Command="{Binding Key8Command}" />
+                <KeyBinding Key="NumPad9" Command="{Binding Key9Command}" />
+            </WrapPanel.InputBindings>
+            <views:SudokuGridPartView DataContext="{Binding ControlGrid}" />
+        </WrapPanel>
+        
+
+
     </Grid>
     
 </catel:UserControl>
