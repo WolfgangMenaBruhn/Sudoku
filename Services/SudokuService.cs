@@ -55,20 +55,26 @@ namespace Sudoku.Services
                 sudokuSubGridPointerCopy = 0;
             }
 
-            if (number == null) return;
-
             var parentX = mSudokuMainGridPointer / 3 + 1;
             var parentY = mSudokuMainGridPointer % 3 + 1;
 
             var x = sudokuSubGridPointerCopy / 3 + 1;
             var y = sudokuSubGridPointerCopy % 3 + 1;
 
-            ChangeUserDefinedToPredefinedNumberRequest?.Invoke(
-                new UserFilledSudokuBox(
-                    mModelsFactory.GetSudokuBoxCoordinate(x, y),
-                    mModelsFactory.GetSudokuBoxCoordinate(parentX, parentY),
-                    null),
-                number.Value);
+            var userFilledSudokuBox = new UserFilledSudokuBox(
+                mModelsFactory.GetSudokuBoxCoordinate(x, y),
+                mModelsFactory.GetSudokuBoxCoordinate(parentX, parentY),
+                null);
+
+            if (number != null)
+                ChangeUserDefinedToPredefinedNumberRequest?.Invoke(
+                    userFilledSudokuBox,
+                    number.Value);
+
+            InformAboutClickedSudokuBox?.Invoke(userFilledSudokuBox);
+
+            if (mSudokuSubGridPointer == 8 && mSudokuMainGridPointer == 8)
+                SetMode(ControlSudokuMode.UserDefining);
         }
 
         public void SetMode(ControlSudokuMode mode)
