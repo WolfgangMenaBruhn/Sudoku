@@ -33,6 +33,38 @@ namespace Sudoku.ViewModels
             mSudokuService.ChangeUserDefinedToPredefinedNumberRequest += OnChangeUserDefinedToPredefinedNumberRequested;
             mSudokuService.ChangePredefinedToPredefinedNumberRequest += OnChangePredefinedToPredefinedNumberRequested;
             mSudokuService.InformAboutClickedSudokuBox += OnSudokuBoxWasClicked;
+            mSudokuService.DeletePredefinedNumberRequest += OnDeletePredefinedNumberRequested;
+        }
+
+        private void OnDeletePredefinedNumberRequested(SudokuBoxBase sudokuBox)
+        {
+            if (sudokuBox == null) return;
+
+            var foundViewModel = 
+                FindViewModel(
+                    mModelsFactoryService.GetPredefinedSudokuBox(
+                        sudokuBox.Coordinate, 
+                        sudokuBox.ParentCoordinate, 
+                        SudokuBoxNumbers.One // irrelevant, use any number 
+                        ));
+
+            if (foundViewModel?.Model == null || foundViewModel.Model.IsForControl)
+                return;
+
+            var viewModelIndex = mSudokuBoxViewModels.IndexOf(foundViewModel);
+
+            var newUserDefinedViewModel =
+                new UserFilledSudokuBoxViewModel(
+                    mModelsFactoryService.GetUserDefinedSudokuBox(
+                        sudokuBox.Coordinate,
+                        sudokuBox.ParentCoordinate,
+                        null),
+                    mSudokuService);
+
+            mSudokuBoxViewModels.RemoveAt(viewModelIndex);
+            mSudokuBoxViewModels.Insert(viewModelIndex, newUserDefinedViewModel);
+
+            RefreshValues();
         }
 
         private void OnSudokuBoxWasClicked(SudokuBoxBase clickedSudokuBox)
@@ -118,7 +150,7 @@ namespace Sudoku.ViewModels
         {
             if (userFilledSudokuBox?.ParentCoordinate == null) return;
 
-            var foundViewModel = FindUserDefinedViewModel(userFilledSudokuBox);
+            var foundViewModel = FindViewModel(userFilledSudokuBox);
             if (foundViewModel == null) return;
 
             // Replace user defined view model with predefined view model:
@@ -144,42 +176,23 @@ namespace Sudoku.ViewModels
         {
             if (predefinedSudokuBox == null) return;
 
-            var foundViewModel = FindPredefinedViewModel(predefinedSudokuBox);
+            var foundViewModel = FindViewModel(predefinedSudokuBox);
             foundViewModel?.ChangeNumber(number);
         }
 
-        private PredefinedSudokuBoxViewModel FindPredefinedViewModel(
-            IPredefinedSudokuBox predefinedSudokuBox)
+        private PredefinedSudokuBoxViewModel FindViewModel(
+            ISudokuBoxBase sudokuBox)
         {
-            if (predefinedSudokuBox == null) return null;
+            if (sudokuBox == null) return null;
 
             foreach (var viewModel in mSudokuBoxViewModels)
             {
                 if (!(viewModel is PredefinedSudokuBoxViewModel predefinedSudokuBoxViewModel)) continue;
                 if (predefinedSudokuBoxViewModel.Model == null) continue;
 
-                if (predefinedSudokuBoxViewModel.Model.ParentCoordinate.Equals(predefinedSudokuBox.ParentCoordinate) &&
-                    predefinedSudokuBoxViewModel.Model.Coordinate.Equals(predefinedSudokuBox.Coordinate))
+                if (predefinedSudokuBoxViewModel.Model.ParentCoordinate.Equals(sudokuBox.ParentCoordinate) &&
+                    predefinedSudokuBoxViewModel.Model.Coordinate.Equals(sudokuBox.Coordinate))
                     return predefinedSudokuBoxViewModel;
-            }
-
-            return null; // Nothing found
-        }
-
-        private UserFilledSudokuBoxViewModel FindUserDefinedViewModel(
-            IUserFilledSudokuBox userFilledSudokuBox)
-        {
-            if (userFilledSudokuBox == null) return null;
-
-            foreach (var viewModel in mSudokuBoxViewModels)
-            {
-                if (!(viewModel is UserFilledSudokuBoxViewModel userDefinedSudokuBoxViewModel)) continue;
-                if (userDefinedSudokuBoxViewModel.Model == null) continue;
-                
-
-                if (userDefinedSudokuBoxViewModel.Model.ParentCoordinate.Equals(userFilledSudokuBox.ParentCoordinate) &&
-                    userDefinedSudokuBoxViewModel.Model.Coordinate.Equals(userFilledSudokuBox.Coordinate))
-                    return userDefinedSudokuBoxViewModel;
             }
 
             return null; // Nothing found

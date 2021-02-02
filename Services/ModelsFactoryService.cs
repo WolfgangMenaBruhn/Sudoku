@@ -8,13 +8,7 @@ namespace Sudoku.Services
 {
     public class ModelsFactoryService : IModelsFactoryService
     {
-        public SudokuBoxCoordinate GetSudokuBoxCoordinate(int x, int y)
-        {
-            if (x < 1 || x > 9) throw new ArgumentOutOfRangeException(nameof(x));
-            if (y < 1 || y > 9) throw new ArgumentOutOfRangeException(nameof(y));
-
-            return new SudokuBoxCoordinate((SudokuBoxNumbers) x, (SudokuBoxNumbers) y);
-        }
+        private readonly SudokuBoxCoordinate mMax3x3Coordinate = SudokuBoxCoordinate.GetMaxCoordinate3x3();
 
         public IPredefinedSudokuBox GetPredefinedSudokuBox(
             SudokuBoxCoordinate coordinate,
@@ -24,21 +18,31 @@ namespace Sudoku.Services
         {
             return new PredefinedSudokuBox(coordinate, parentCoordinate, number, isForControl);
         }
+
+        public IUserFilledSudokuBox GetUserDefinedSudokuBox(
+            SudokuBoxCoordinate coordinate,
+            SudokuBoxCoordinate parentCoordinate,
+            SudokuBoxNumbers? number)
+        {
+            return new UserFilledSudokuBox(coordinate, parentCoordinate, number);
+        }
         
         public IEnumerable<IPredefinedSudokuBox> GetNinePredefinedSudokuBoxes()
         {
             var result = new List<IPredefinedSudokuBox>();
 
-            var dummyCoordinate = GetSudokuBoxCoordinate(1,1);
-            for (var i = 0; i < 9; i++)
+            var dummyCoordinate = SudokuBoxCoordinate.GetCoordinate(1,1, mMax3x3Coordinate);
+
+            for (var index = 0; index < 9; index++)
             {
-                var currentCoordinate = GetSudokuBoxCoordinate(i / 3 + 1, i % 3 + 1);
+                var currentCoordinate = SudokuBoxCoordinate.GetCoordinate(index, mMax3x3Coordinate.X);
+                if (!currentCoordinate.HasValue) throw new ArgumentOutOfRangeException(nameof(currentCoordinate));
 
                 result.Add(
                     GetPredefinedSudokuBox(
-                        currentCoordinate, 
+                        currentCoordinate.Value, 
                         dummyCoordinate, 
-                        (SudokuBoxNumbers)(i + 1),
+                        (SudokuBoxNumbers)(index + 1),
                         true));
             }
 
@@ -51,16 +55,18 @@ namespace Sudoku.Services
 
             for (var parentIndex = 0; parentIndex < 9; parentIndex++)
             {
-                var parentCoordinate = GetSudokuBoxCoordinate(parentIndex / 3 + 1, parentIndex % 3 + 1);
+                var parentCoordinate = SudokuBoxCoordinate.GetCoordinate(parentIndex, mMax3x3Coordinate.X);
+                if (!parentCoordinate.HasValue) throw new ArgumentOutOfRangeException(nameof(parentCoordinate));
 
                 for (var childIndex = 0; childIndex < 9; childIndex++)
                 {
-                    var childCoordinate = GetSudokuBoxCoordinate(childIndex / 3 + 1, childIndex % 3 + 1);
-                    
+                    var childCoordinate = SudokuBoxCoordinate.GetCoordinate(childIndex, mMax3x3Coordinate.X);
+                    if (!childCoordinate.HasValue) throw new ArgumentOutOfRangeException(nameof(childCoordinate));
+
                     result.Add(
                         new UserFilledSudokuBox(
-                            childCoordinate,
-                            parentCoordinate,
+                            childCoordinate.Value,
+                            parentCoordinate.Value,
                             null));
                 }
             }

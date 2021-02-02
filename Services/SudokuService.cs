@@ -7,15 +7,9 @@ namespace Sudoku.Services
 {
     public class SudokuService : ISudokuService
     {
-        private int mSudokuMainGridPointer;
-        private int mSudokuSubGridPointer = -1;
-        private readonly IModelsFactoryService mModelsFactory;
-
-        public SudokuService(
-            IModelsFactoryService modelsFactory)
-        {
-            mModelsFactory = modelsFactory;
-        }
+        private readonly SudokuBoxCoordinate mMaxCoordinate = SudokuBoxCoordinate.GetMaxCoordinate3x3();
+        private SudokuBoxCoordinate mCurrentParentCoordinate;
+        private SudokuBoxCoordinate mCurrentChildCoordinate;
 
         #region delegates and events
 
@@ -26,10 +20,14 @@ namespace Sudoku.Services
         public event ChangeUserDefinedToPredefinedNumberRequestedDelegate ChangeUserDefinedToPredefinedNumberRequest;
 
         public delegate void ChangePredefinedToPredefinedNumberRequestedDelegate(
-            IPredefinedSudokuBox userFilledSudokuBox,
+            IPredefinedSudokuBox preDefinedSudokuBox,
             SudokuBoxNumbers number);
 
         public event ChangePredefinedToPredefinedNumberRequestedDelegate ChangePredefinedToPredefinedNumberRequest;
+
+        public delegate void DeletePredefinedNumberDelegate(SudokuBoxBase predefinedSudokuBox);
+
+        public event DeletePredefinedNumberDelegate DeletePredefinedNumberRequest;
 
         public delegate void ResetDelegate();
 
@@ -42,39 +40,44 @@ namespace Sudoku.Services
 
         #endregion
 
+        public SudokuService()
+        {
+            Reset();
+        }
+
         public void ConsiderControlPressedKey(SudokuBoxNumbers? number)
         {
-            if (mSudokuSubGridPointer == 8 && mSudokuMainGridPointer == 8) 
-                return; // Only one run for each game
-
-            var sudokuSubGridPointerCopy = ++mSudokuSubGridPointer;
-            if (mSudokuSubGridPointer == 9)
-            {
-                mSudokuMainGridPointer++;
-                mSudokuSubGridPointer = 0;
-                sudokuSubGridPointerCopy = 0;
-            }
-
-            var parentX = mSudokuMainGridPointer / 3 + 1;
-            var parentY = mSudokuMainGridPointer % 3 + 1;
-
-            var x = sudokuSubGridPointerCopy / 3 + 1;
-            var y = sudokuSubGridPointerCopy % 3 + 1;
-
-            var userFilledSudokuBox = new UserFilledSudokuBox(
-                mModelsFactory.GetSudokuBoxCoordinate(x, y),
-                mModelsFactory.GetSudokuBoxCoordinate(parentX, parentY),
+            var userFilledBox = new UserFilledSudokuBox(
+                mCurrentChildCoordinate,
+                mCurrentParentCoordinate,
                 null);
 
             if (number != null)
+            {
                 ChangeUserDefinedToPredefinedNumberRequest?.Invoke(
-                    userFilledSudokuBox,
+                    userFilledBox,
                     number.Value);
 
-            InformAboutClickedSudokuBox?.Invoke(userFilledSudokuBox);
+                var predefinedBox = new PredefinedSudokuBox(
+                    mCurrentChildCoordinate,
+                    mCurrentParentCoordinate,
+                    number.Value);
 
-            if (mSudokuSubGridPointer == 8 && mSudokuMainGridPointer == 8)
-                SetMode(ControlSudokuMode.UserDefining);
+                ChangePredefinedToPredefinedNumberRequest?.Invoke(
+                    predefinedBox,
+                    number.Value);
+            }
+            else
+                DeletePredefinedNumberRequest?.Invoke(userFilledBox);
+
+            InformAboutClickedSudokuBox?.Invoke(userFilledBox);
+
+            var nextChildCoordinate = mCurrentChildCoordinate.GetNext(mMaxCoordinate);
+            mCurrentChildCoordinate = nextChildCoordinate ?? new SudokuBoxCoordinate(SudokuBoxNumbers.One, SudokuBoxNumbers.One);
+
+            if (nextChildCoordinate != null) return;
+            var nextParentCoordinate = mCurrentParentCoordinate.GetNext(mMaxCoordinate);
+            mCurrentParentCoordinate = nextParentCoordinate ?? new SudokuBoxCoordinate(SudokuBoxNumbers.One, SudokuBoxNumbers.One);
         }
 
         public void SetMode(ControlSudokuMode mode)
@@ -127,13 +130,24 @@ namespace Sudoku.Services
         public void NewGameRequested()
         {
             ResetRequest?.Invoke();
+            Reset();
+        }
 
-            mSudokuMainGridPointer = 0;
-            mSudokuSubGridPointer = -1;
+        private void Reset()
+        {
+            mCurrentParentCoordinate = new SudokuBoxCoordinate(SudokuBoxNumbers.One, SudokuBoxNumbers.One);
+            mCurrentChildCoordinate = new SudokuBoxCoordinate(SudokuBoxNumbers.One, SudokuBoxNumbers.One);
         }
 
         public void SudokuBoxWasClicked(SudokuBoxBase clickedSudokuBox)
         {
+            if ((clickedSudokuBox is IPredefinedSudokuBox predefinedBox && !predefinedBox.IsForControl ) ||
+                clickedSudokuBox is IUserFilledSudokuBox)
+            {
+                mCurrentChildCoordinate = clickedSudokuBox.Coordinate;
+                mCurrentParentCoordinate = clickedSudokuBox.ParentCoordinate;
+            }
+
             InformAboutClickedSudokuBox?.Invoke(clickedSudokuBox);
         }
     }
