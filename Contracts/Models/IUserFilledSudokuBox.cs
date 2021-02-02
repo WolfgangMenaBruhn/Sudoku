@@ -6,5 +6,6 @@ namespace Sudoku.Contracts.Models
     {
         SudokuBoxNumbers? Number { get; }
         UserFilledSudokuBox WithNumber(SudokuBoxNumbers newNumber);
+        new SudokuBoxCoordinate ParentCoordinate { get; }
     }
 }

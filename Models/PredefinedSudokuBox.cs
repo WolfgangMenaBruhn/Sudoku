@@ -6,22 +6,20 @@ namespace Sudoku.Models
     {
         public PredefinedSudokuBox(
             SudokuBoxCoordinate coordinate, 
-            SudokuBoxCoordinate parentCoordinate, 
-            SudokuBoxNumbers number, 
-            bool isForControl = false)
+            SudokuBoxCoordinate? parentCoordinate, 
+            SudokuBoxNumbers number)
             : base(coordinate, parentCoordinate, SudokuBoxState.Predefined)
         {
             Number = number;
-            IsForControl = isForControl;
         }
 
         public SudokuBoxNumbers Number { get; }
 
-        public bool IsForControl { get; }
+        public bool IsForControl => ParentCoordinate == null;
 
         public IPredefinedSudokuBox WithNumber(SudokuBoxNumbers newNumber)
         {
-            return newNumber == Number ? this : new PredefinedSudokuBox(Coordinate, ParentCoordinate, newNumber, IsForControl);
+            return newNumber == Number ? this : new PredefinedSudokuBox(Coordinate, ParentCoordinate, newNumber);
         }
     }
 }

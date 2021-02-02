@@ -14,7 +14,11 @@ namespace Sudoku.Models
 
         public UserFilledSudokuBox WithNumber(SudokuBoxNumbers newNumber)
         {
+            // ReSharper disable once PossibleInvalidOperationException
             return newNumber == Number ? this : new UserFilledSudokuBox(Coordinate, ParentCoordinate, newNumber);
         }
+
+        // ReSharper disable once PossibleInvalidOperationException
+        public new SudokuBoxCoordinate ParentCoordinate => base.ParentCoordinate.Value;
     }
 }

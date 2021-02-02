@@ -23,7 +23,7 @@ namespace Sudoku.ViewModels
         {
             if (sudokuBoxes == null) throw new ArgumentNullException(nameof(sudokuBoxes));
             var sudokuBoxArray = sudokuBoxes as ISudokuBoxBase[] ?? sudokuBoxes.ToArray();
-            if (sudokuBoxArray.Count() != 9) throw new ArgumentOutOfRangeException(nameof(sudokuBoxes));
+            if (sudokuBoxArray.Length != 9) throw new ArgumentOutOfRangeException(nameof(sudokuBoxes));
             
             mSudokuBoxes = sudokuBoxArray;
             mSudokuService = sudokuService;
@@ -36,7 +36,7 @@ namespace Sudoku.ViewModels
             mSudokuService.DeletePredefinedNumberRequest += OnDeletePredefinedNumberRequested;
         }
 
-        private void OnDeletePredefinedNumberRequested(SudokuBoxBase sudokuBox)
+        private void OnDeletePredefinedNumberRequested(IUserFilledSudokuBox sudokuBox)
         {
             if (sudokuBox == null) return;
 
@@ -46,7 +46,7 @@ namespace Sudoku.ViewModels
                         sudokuBox.Coordinate, 
                         sudokuBox.ParentCoordinate, 
                         SudokuBoxNumbers.One // irrelevant, use any number 
-                        ));
+                        )) as PredefinedSudokuBoxViewModel;
 
             if (foundViewModel?.Model == null || foundViewModel.Model.IsForControl)
                 return;
@@ -95,11 +95,13 @@ namespace Sudoku.ViewModels
                     var isHighlighted = currentModel.ParentCoordinate.Equals(clickedSudokuBox.ParentCoordinate);
                     var isSameNumber = false;
 
-                    if (currentModel.ParentCoordinate.X == clickedSudokuBox.ParentCoordinate.X &&
+                    if (currentModel.ParentCoordinate.HasValue && clickedSudokuBox.ParentCoordinate.HasValue &&
+                        currentModel.ParentCoordinate.Value.X == clickedSudokuBox.ParentCoordinate.Value.X &&
                         currentModel.Coordinate.X == clickedSudokuBox.Coordinate.X)
                         isHighlighted = true;
 
-                    if (currentModel.ParentCoordinate.Y == clickedSudokuBox.ParentCoordinate.Y &&
+                    if (currentModel.ParentCoordinate.HasValue && clickedSudokuBox.ParentCoordinate.HasValue &&
+                        currentModel.ParentCoordinate.Value.Y == clickedSudokuBox.ParentCoordinate.Value.Y &&
                         currentModel.Coordinate.Y == clickedSudokuBox.Coordinate.Y)
                         isHighlighted = true;
 
@@ -148,9 +150,9 @@ namespace Sudoku.ViewModels
             IUserFilledSudokuBox userFilledSudokuBox,
             SudokuBoxNumbers number)
         {
-            if (userFilledSudokuBox?.ParentCoordinate == null) return;
+            if (userFilledSudokuBox == null) return;
 
-            var foundViewModel = FindViewModel(userFilledSudokuBox);
+            var foundViewModel = FindViewModel(userFilledSudokuBox) as UserFilledSudokuBoxViewModel;
             if (foundViewModel == null) return;
 
             // Replace user defined view model with predefined view model:
@@ -176,23 +178,23 @@ namespace Sudoku.ViewModels
         {
             if (predefinedSudokuBox == null) return;
 
-            var foundViewModel = FindViewModel(predefinedSudokuBox);
+            var foundViewModel = FindViewModel(predefinedSudokuBox) as PredefinedSudokuBoxViewModel;
             foundViewModel?.ChangeNumber(number);
         }
 
-        private PredefinedSudokuBoxViewModel FindViewModel(
+        private BaseSudokuBoxViewModel FindViewModel(
             ISudokuBoxBase sudokuBox)
         {
             if (sudokuBox == null) return null;
 
             foreach (var viewModel in mSudokuBoxViewModels)
             {
-                if (!(viewModel is PredefinedSudokuBoxViewModel predefinedSudokuBoxViewModel)) continue;
-                if (predefinedSudokuBoxViewModel.Model == null) continue;
+                var model = viewModel.GetModel();
+                if (model == null) continue;
 
-                if (predefinedSudokuBoxViewModel.Model.ParentCoordinate.Equals(sudokuBox.ParentCoordinate) &&
-                    predefinedSudokuBoxViewModel.Model.Coordinate.Equals(sudokuBox.Coordinate))
-                    return predefinedSudokuBoxViewModel;
+                if (model.ParentCoordinate.Equals(sudokuBox.ParentCoordinate) &&
+                    model.Coordinate.Equals(sudokuBox.Coordinate))
+                    return viewModel;
             }
 
             return null; // Nothing found

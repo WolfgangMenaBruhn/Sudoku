@@ -5,7 +5,7 @@ namespace Sudoku.Models
 {
     public abstract class SudokuBoxBase : ModelBase, ISudokuBoxBase
     {
-        protected SudokuBoxBase(SudokuBoxCoordinate coordinate, SudokuBoxCoordinate parentCoordinate, SudokuBoxState state)
+        protected SudokuBoxBase(SudokuBoxCoordinate coordinate, SudokuBoxCoordinate? parentCoordinate, SudokuBoxState state)
         {
             Coordinate = coordinate;
             ParentCoordinate = parentCoordinate;
@@ -16,6 +16,6 @@ namespace Sudoku.Models
 
         public SudokuBoxCoordinate Coordinate { get; }
 
-        public SudokuBoxCoordinate ParentCoordinate { get; }
+        public SudokuBoxCoordinate? ParentCoordinate { get; }
     }
 }

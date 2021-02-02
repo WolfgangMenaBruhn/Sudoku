@@ -25,7 +25,7 @@ namespace Sudoku.Services
 
         public event ChangePredefinedToPredefinedNumberRequestedDelegate ChangePredefinedToPredefinedNumberRequest;
 
-        public delegate void DeletePredefinedNumberDelegate(SudokuBoxBase predefinedSudokuBox);
+        public delegate void DeletePredefinedNumberDelegate(IUserFilledSudokuBox predefinedSudokuBox);
 
         public event DeletePredefinedNumberDelegate DeletePredefinedNumberRequest;
 
@@ -68,7 +68,15 @@ namespace Sudoku.Services
                     number.Value);
             }
             else
+            {
+                var predefinedBoxToBeDeleted = new PredefinedSudokuBox(
+                    mCurrentChildCoordinate,
+                    mCurrentParentCoordinate,
+                    SudokuBoxNumbers.One // does not matter which value
+                    );
+
                 DeletePredefinedNumberRequest?.Invoke(userFilledBox);
+            }
 
             InformAboutClickedSudokuBox?.Invoke(userFilledBox);
 
@@ -145,7 +153,8 @@ namespace Sudoku.Services
                 clickedSudokuBox is IUserFilledSudokuBox)
             {
                 mCurrentChildCoordinate = clickedSudokuBox.Coordinate;
-                mCurrentParentCoordinate = clickedSudokuBox.ParentCoordinate;
+                // ReSharper disable once PossibleInvalidOperationException
+                mCurrentParentCoordinate = clickedSudokuBox.ParentCoordinate.Value;
             }
 
             InformAboutClickedSudokuBox?.Invoke(clickedSudokuBox);

@@ -12,11 +12,10 @@ namespace Sudoku.Services
 
         public IPredefinedSudokuBox GetPredefinedSudokuBox(
             SudokuBoxCoordinate coordinate,
-            SudokuBoxCoordinate parentCoordinate,
-            SudokuBoxNumbers number,
-            bool isForControl = false)
+            SudokuBoxCoordinate? parentCoordinate,
+            SudokuBoxNumbers number)
         {
-            return new PredefinedSudokuBox(coordinate, parentCoordinate, number, isForControl);
+            return new PredefinedSudokuBox(coordinate, parentCoordinate, number);
         }
 
         public IUserFilledSudokuBox GetUserDefinedSudokuBox(
@@ -31,8 +30,6 @@ namespace Sudoku.Services
         {
             var result = new List<IPredefinedSudokuBox>();
 
-            var dummyCoordinate = SudokuBoxCoordinate.GetCoordinate(1,1, mMax3x3Coordinate);
-
             for (var index = 0; index < 9; index++)
             {
                 var currentCoordinate = SudokuBoxCoordinate.GetCoordinate(index, mMax3x3Coordinate.X);
@@ -41,9 +38,8 @@ namespace Sudoku.Services
                 result.Add(
                     GetPredefinedSudokuBox(
                         currentCoordinate.Value, 
-                        dummyCoordinate, 
-                        (SudokuBoxNumbers)(index + 1),
-                        true));
+                        null, 
+                        (SudokuBoxNumbers)(index + 1)));
             }
 
             return result;

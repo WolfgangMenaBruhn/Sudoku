@@ -10,9 +10,8 @@ namespace Sudoku.Contracts.Services
 
         IPredefinedSudokuBox GetPredefinedSudokuBox(
             SudokuBoxCoordinate coordinate,
-            SudokuBoxCoordinate parentCoordinate,
-            SudokuBoxNumbers number,
-            bool isForControl = false);
+            SudokuBoxCoordinate? parentCoordinate,
+            SudokuBoxNumbers number);
 
         IUserFilledSudokuBox GetUserDefinedSudokuBox(
             SudokuBoxCoordinate coordinate,

@@ -8,6 +8,6 @@ namespace Sudoku.Contracts.Models
 
         SudokuBoxCoordinate Coordinate { get; }
 
-        SudokuBoxCoordinate ParentCoordinate { get; }
+        SudokuBoxCoordinate? ParentCoordinate { get; }
     }
 }
