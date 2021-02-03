@@ -6,7 +6,7 @@ using Sudoku.Models;
 
 namespace Sudoku.ViewModels
 {
-    public class UserFilledSudokuBoxViewModel : BaseSudokuBoxViewModel
+    public class UserFilledSudokuBoxViewModel : BaseSudokuBoxViewModel, IIsDuplicated
     {
         private readonly ISudokuService mSudokuService;
 
@@ -26,6 +26,33 @@ namespace Sudoku.ViewModels
         }
 
         public string Number => Model.Number == null ? string.Empty : ((int) Model.Number).ToString();
+
+        private bool mIsDuplicated;
+
+        public bool IsDirectDuplicated
+        {
+            get => mIsDuplicated && !string.IsNullOrEmpty(Number);
+            set
+            {
+                if (value == mIsDuplicated) return;
+                mIsDuplicated = value;
+                RefreshValues();
+            }
+        }
+
+        private bool mIsIndirectDuplicated;
+        public bool IsIndirectDuplicated
+        {
+            get => mIsIndirectDuplicated;
+            set
+            {
+                if (value == mIsIndirectDuplicated) return;
+                mIsIndirectDuplicated = value;
+                RefreshValues();
+            }
+        }
+
+        public bool IsDuplicated => IsDirectDuplicated || IsIndirectDuplicated;
 
         #region click command
 
@@ -62,6 +89,9 @@ namespace Sudoku.ViewModels
         {
             base.RefreshValues();
             RaisePropertyChanged(nameof(Number));
+            RaisePropertyChanged(nameof(IsDirectDuplicated));
+            RaisePropertyChanged(nameof(IsIndirectDuplicated));
+            RaisePropertyChanged(nameof(IsDuplicated));
         }
     }
 }

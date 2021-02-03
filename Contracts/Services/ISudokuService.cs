@@ -52,5 +52,7 @@ namespace Sudoku.Contracts.Services
         void ConsiderControlPressedKey(SudokuBoxNumbers? number);
 
         event SudokuService.DeletePredefinedNumberDelegate DeletePredefinedNumberRequest;
+
+        event SudokuService.MarkDuplicatedNumbersDelegate MarkDuplicatedNumbersRequested;
     }
 }

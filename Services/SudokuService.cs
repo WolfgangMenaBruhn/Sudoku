@@ -38,6 +38,10 @@ namespace Sudoku.Services
 
         public event InformAboutClickedSudokuBoxDelegate InformAboutClickedSudokuBox;
 
+        public delegate void MarkDuplicatedNumbersDelegate();
+
+        public event MarkDuplicatedNumbersDelegate MarkDuplicatedNumbersRequested;
+
         #endregion
 
         public SudokuService()
@@ -47,45 +51,49 @@ namespace Sudoku.Services
 
         public void ConsiderControlPressedKey(SudokuBoxNumbers? number)
         {
-            var userFilledBox = new UserFilledSudokuBox(
-                mCurrentChildCoordinate,
-                mCurrentParentCoordinate,
-                null);
-
-            if (number != null)
+            try
             {
-                ChangeUserDefinedToPredefinedNumberRequest?.Invoke(
-                    userFilledBox,
-                    number.Value);
-
-                var predefinedBox = new PredefinedSudokuBox(
+                var userFilledBox = new UserFilledSudokuBox(
                     mCurrentChildCoordinate,
                     mCurrentParentCoordinate,
-                    number.Value);
+                    null);
 
-                ChangePredefinedToPredefinedNumberRequest?.Invoke(
-                    predefinedBox,
-                    number.Value);
+                if (number != null)
+                {
+                    ChangeUserDefinedToPredefinedNumberRequest?.Invoke(
+                        userFilledBox,
+                        number.Value);
+
+                    var predefinedBox = new PredefinedSudokuBox(
+                        mCurrentChildCoordinate,
+                        mCurrentParentCoordinate,
+                        number.Value);
+
+                    ChangePredefinedToPredefinedNumberRequest?.Invoke(
+                        predefinedBox,
+                        number.Value);
+                }
+                else
+                {
+                    DeletePredefinedNumberRequest?.Invoke(userFilledBox);
+                }
+
+                InformAboutClickedSudokuBox?.Invoke(userFilledBox);
+                MarkDuplicatedNumbersRequested?.Invoke();
             }
-            else
+            finally
             {
-                var predefinedBoxToBeDeleted = new PredefinedSudokuBox(
-                    mCurrentChildCoordinate,
-                    mCurrentParentCoordinate,
-                    SudokuBoxNumbers.One // does not matter which value
-                    );
+                var nextChildCoordinate = mCurrentChildCoordinate.GetNext(mMaxCoordinate);
+                mCurrentChildCoordinate = nextChildCoordinate ??
+                                          new SudokuBoxCoordinate(SudokuBoxNumbers.One, SudokuBoxNumbers.One);
 
-                DeletePredefinedNumberRequest?.Invoke(userFilledBox);
+                if (nextChildCoordinate == null)
+                {
+                    var nextParentCoordinate = mCurrentParentCoordinate.GetNext(mMaxCoordinate);
+                    mCurrentParentCoordinate = nextParentCoordinate ??
+                                               new SudokuBoxCoordinate(SudokuBoxNumbers.One, SudokuBoxNumbers.One);
+                }
             }
-
-            InformAboutClickedSudokuBox?.Invoke(userFilledBox);
-
-            var nextChildCoordinate = mCurrentChildCoordinate.GetNext(mMaxCoordinate);
-            mCurrentChildCoordinate = nextChildCoordinate ?? new SudokuBoxCoordinate(SudokuBoxNumbers.One, SudokuBoxNumbers.One);
-
-            if (nextChildCoordinate != null) return;
-            var nextParentCoordinate = mCurrentParentCoordinate.GetNext(mMaxCoordinate);
-            mCurrentParentCoordinate = nextParentCoordinate ?? new SudokuBoxCoordinate(SudokuBoxNumbers.One, SudokuBoxNumbers.One);
         }
 
         public void SetMode(ControlSudokuMode mode)
@@ -114,9 +122,12 @@ namespace Sudoku.Services
             IUserFilledSudokuBox userFilledSudokuBox)
         {
             if (userFilledSudokuBox != null && PredefinedNumber.HasValue)
+            {
                 ChangeUserDefinedToPredefinedNumberRequest?.Invoke(
                     userFilledSudokuBox,
                     PredefinedNumber.Value);
+                MarkDuplicatedNumbersRequested?.Invoke();
+            }
         }
 
         public bool IsAllowedChangingUserDefinedNumberToPredefinedNumber() 
@@ -129,15 +140,19 @@ namespace Sudoku.Services
             IPredefinedSudokuBox predefinedSudokuBox)
         {
             if (predefinedSudokuBox != null && IsAllowedChangingUserDefinedNumberToPredefinedNumber())
+            {
                 ChangePredefinedToPredefinedNumberRequest?.Invoke(
                     predefinedSudokuBox,
                     // ReSharper disable once PossibleInvalidOperationException
                     PredefinedNumber.Value);
+                MarkDuplicatedNumbersRequested?.Invoke();
+            }
         }
 
         public void NewGameRequested()
         {
             ResetRequest?.Invoke();
+            MarkDuplicatedNumbersRequested?.Invoke();
             Reset();
         }
 
@@ -158,6 +173,7 @@ namespace Sudoku.Services
             }
 
             InformAboutClickedSudokuBox?.Invoke(clickedSudokuBox);
+            MarkDuplicatedNumbersRequested?.Invoke();
         }
     }
 }

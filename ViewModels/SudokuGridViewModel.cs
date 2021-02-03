@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Catel.MVVM;
 using System.Threading.Tasks;
 using Sudoku.Contracts.Services;
 using Sudoku.Helper.Extensions;
+using Sudoku.Models;
 
 namespace Sudoku.ViewModels
 {
@@ -21,6 +23,48 @@ namespace Sudoku.ViewModels
             InitializeSudokuBoxViewModels();
 
             mSudokuService.ResetRequest += OnResetRequested;
+            mSudokuService.MarkDuplicatedNumbersRequested += OnMarkDuplicatedNumbersRequested;
+        }
+
+        private void OnMarkDuplicatedNumbersRequested()
+        {
+            foreach (var gridPartViewModel in mSudokuBoxViewModels)
+                gridPartViewModel.MarkDirectDuplicatedNumbers();
+
+            for (int index = (int) SudokuBoxNumbers.One - 1; index < (int) SudokuBoxNumbers.Nine; index++)
+            {
+                var parentViewModel = mSudokuBoxViewModels[index];
+                parentViewModel.ResetIndirectDuplication();
+            }
+            
+            for (int index = (int) SudokuBoxNumbers.One - 1; index < (int) SudokuBoxNumbers.Eight; index++)
+            {
+                var parentViewModel = mSudokuBoxViewModels[index];
+                if (!parentViewModel.ParentCoordinate.HasValue) continue;
+                
+                for (int subIndex = index + 1; subIndex < (int) SudokuBoxNumbers.Nine; subIndex++)
+                {
+                    var childViewModel = mSudokuBoxViewModels[subIndex];
+                    if (!childViewModel.ParentCoordinate.HasValue) continue;
+
+                    var parentNumbers = parentViewModel.GetAllNumbers().Distinct().ToList();
+
+                    foreach (var currentParentNumber in parentNumbers)
+                    {
+                        foreach (var currentParentViewModel in parentViewModel.FindViewModels(currentParentNumber))
+                        {
+                            if (!(currentParentViewModel is IIsDuplicated duplicatableParentViewModel)) continue;
+
+                            // ReSharper disable once PossibleInvalidOperationException
+                            var parentCoordinate = parentViewModel.ParentCoordinate.Value;
+                            var currentCoordinate = currentParentViewModel.GetModel().Coordinate;
+
+                            if (childViewModel.MarkIndirectDuplicatedNumbers(parentCoordinate, currentCoordinate, currentParentNumber))
+                                duplicatableParentViewModel.IsIndirectDuplicated = true;
+                        }
+                    }
+                }
+            }
         }
 
         private void OnResetRequested()

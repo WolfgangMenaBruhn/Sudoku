@@ -7,14 +7,43 @@ namespace Sudoku.ViewModels
     public abstract class BaseSudokuBoxViewModel : ViewModelBase
     {
         protected ISudokuBoxBase mModel;
+        private bool mIsSelected;
+        private bool mIsHighlighted
+                ;
 
-        public bool IsSelected { get; set; }
+        private bool mIsSameNumber;
 
-        public bool IsHighlighted { get; set; }
+        public bool IsSelected
+        {
+            get => mIsSelected;
+            set
+            {
+                mIsSelected = value;
+                RefreshValues();
+            }
+        }
+
+        public bool IsHighlighted
+        {
+            get => mIsHighlighted;
+            set
+            {
+                mIsHighlighted = value;
+                RefreshValues();
+            }
+        }
 
         public bool IsSelectedOrHighlighted => IsSelected || IsHighlighted;
 
-        public bool IsSameNumber { get; set; }
+        public bool IsSameNumber
+        {
+            get => mIsSameNumber;
+            set
+            {
+                mIsSameNumber = value;
+                RefreshValues();
+            }
+        }
 
         protected void RefreshValues()
         {

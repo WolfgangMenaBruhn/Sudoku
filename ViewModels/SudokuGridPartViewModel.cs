@@ -23,12 +23,13 @@ namespace Sudoku.ViewModels
         {
             if (sudokuBoxes == null) throw new ArgumentNullException(nameof(sudokuBoxes));
             var sudokuBoxArray = sudokuBoxes as ISudokuBoxBase[] ?? sudokuBoxes.ToArray();
-            if (sudokuBoxArray.Length != 9) throw new ArgumentOutOfRangeException(nameof(sudokuBoxes));
+            if (sudokuBoxArray.Length != (int)SudokuBoxNumbers.Nine) throw new ArgumentOutOfRangeException(nameof(sudokuBoxes));
             
             mSudokuBoxes = sudokuBoxArray;
             mSudokuService = sudokuService;
             mModelsFactoryService = modelsFactoryService;
 
+            CheckSudokuBoxes();
             InitializeSudokuBoxViewModels();
             mSudokuService.ChangeUserDefinedToPredefinedNumberRequest += OnChangeUserDefinedToPredefinedNumberRequested;
             mSudokuService.ChangePredefinedToPredefinedNumberRequest += OnChangePredefinedToPredefinedNumberRequested;
@@ -36,17 +37,32 @@ namespace Sudoku.ViewModels
             mSudokuService.DeletePredefinedNumberRequest += OnDeletePredefinedNumberRequested;
         }
 
+        private void CheckSudokuBoxes()
+        {
+            var firstBox = mSudokuBoxes.First();
+            var allMustHaveParentCoordinates = firstBox.ParentCoordinate != null;
+            var allMustHaveNullParentCoordinates = !allMustHaveParentCoordinates;
+
+            foreach(var box in mSudokuBoxes)
+                if (allMustHaveParentCoordinates && box.ParentCoordinate == null)
+                    throw new ArgumentOutOfRangeException(nameof(box.ParentCoordinate));
+                else if (allMustHaveNullParentCoordinates && box.ParentCoordinate != null)
+                    throw new ArgumentOutOfRangeException(nameof(box.ParentCoordinate));
+                else if (allMustHaveParentCoordinates && !box.ParentCoordinate.Value.Equals(firstBox.ParentCoordinate.Value))
+                    throw new ArgumentOutOfRangeException(nameof(box.ParentCoordinate));
+        }
+
+        public SudokuBoxCoordinate? ParentCoordinate => mSudokuBoxes.First().ParentCoordinate;
+
         private void OnDeletePredefinedNumberRequested(IUserFilledSudokuBox sudokuBox)
         {
             if (sudokuBox == null) return;
 
             var foundViewModel = 
                 FindViewModel(
-                    mModelsFactoryService.GetPredefinedSudokuBox(
-                        sudokuBox.Coordinate, 
-                        sudokuBox.ParentCoordinate, 
-                        SudokuBoxNumbers.One // irrelevant, use any number 
-                        )) as PredefinedSudokuBoxViewModel;
+                    sudokuBox.Coordinate, 
+                    sudokuBox.ParentCoordinate
+                ) as PredefinedSudokuBoxViewModel;
 
             if (foundViewModel?.Model == null || foundViewModel.Model.IsForControl)
                 return;
@@ -144,6 +160,8 @@ namespace Sudoku.ViewModels
                     viewModel.IsSameNumber = isSameNumber;
                 }
             }
+
+            RefreshValues();
         }
 
         private void OnChangeUserDefinedToPredefinedNumberRequested(
@@ -152,7 +170,7 @@ namespace Sudoku.ViewModels
         {
             if (userFilledSudokuBox == null) return;
 
-            var foundViewModel = FindViewModel(userFilledSudokuBox) as UserFilledSudokuBoxViewModel;
+            var foundViewModel = FindViewModel(userFilledSudokuBox.Coordinate, userFilledSudokuBox.ParentCoordinate) as UserFilledSudokuBoxViewModel;
             if (foundViewModel == null) return;
 
             // Replace user defined view model with predefined view model:
@@ -178,26 +196,136 @@ namespace Sudoku.ViewModels
         {
             if (predefinedSudokuBox == null) return;
 
-            var foundViewModel = FindViewModel(predefinedSudokuBox) as PredefinedSudokuBoxViewModel;
-            foundViewModel?.ChangeNumber(number);
+            var foundViewModel = FindViewModel(predefinedSudokuBox.Coordinate, predefinedSudokuBox.ParentCoordinate) as PredefinedSudokuBoxViewModel;
+            foundViewModel?.SetNumber(number);
         }
 
         private BaseSudokuBoxViewModel FindViewModel(
-            ISudokuBoxBase sudokuBox)
+            SudokuBoxCoordinate coordinate,
+            SudokuBoxCoordinate? parentCoordinate)
         {
-            if (sudokuBox == null) return null;
-
             foreach (var viewModel in mSudokuBoxViewModels)
             {
                 var model = viewModel.GetModel();
                 if (model == null) continue;
 
-                if (model.ParentCoordinate.Equals(sudokuBox.ParentCoordinate) &&
-                    model.Coordinate.Equals(sudokuBox.Coordinate))
+                if (model.ParentCoordinate.Equals(parentCoordinate) &&
+                    model.Coordinate.Equals(coordinate))
                     return viewModel;
             }
 
             return null; // Nothing found
+        }
+
+        public IEnumerable<BaseSudokuBoxViewModel> FindViewModels(
+            SudokuBoxNumbers number,
+            bool mustHaveParentCoordinate = true)
+        {
+            var result = new List<BaseSudokuBoxViewModel>();
+
+            foreach (var viewModel in mSudokuBoxViewModels)
+            {
+                var model = viewModel.GetModel();
+                switch (model)
+                {
+                    case IPredefinedSudokuBox predefinedSudokuBox:
+                        if (predefinedSudokuBox.Number == number)
+                            if (!mustHaveParentCoordinate || predefinedSudokuBox.ParentCoordinate != null)
+                                result.Add(viewModel);
+                        break;
+                    case IUserFilledSudokuBox userFilledSudoku:
+                        if (userFilledSudoku.Number.HasValue && userFilledSudoku.Number.Value == number)
+                            result.Add(viewModel);
+                        break;
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<SudokuBoxNumbers> GetAllNumbers(
+            bool mustHaveParentCoordinate = true)
+        {
+            var result = new List<SudokuBoxNumbers>();
+
+            foreach (var viewModel in mSudokuBoxViewModels)
+            {
+                var model = viewModel.GetModel();
+                switch (model)
+                {
+                    case IPredefinedSudokuBox predefinedSudokuBox:
+                        if (!mustHaveParentCoordinate || predefinedSudokuBox.ParentCoordinate != null)
+                                result.Add(predefinedSudokuBox.Number);
+                        break;
+                    case IUserFilledSudokuBox userFilledSudoku:
+                        if (userFilledSudoku.Number.HasValue)
+                            result.Add(userFilledSudoku.Number.Value);
+                        break;
+                }
+            }
+
+            return result;
+        }
+
+        public void MarkDirectDuplicatedNumbers()
+        {
+            var duplicatedNumbers =
+                GetAllNumbers()
+                    .GroupBy(n => n)
+                    .Where(g => g.Count() > 1)
+                    .Select(x =>x.Key);
+
+            foreach (var viewModel in mSudokuBoxViewModels)
+                if (viewModel is IIsDuplicated duplicatedViewModel)
+                    duplicatedViewModel.IsDirectDuplicated = false;
+
+            foreach (var duplicatedNumber in duplicatedNumbers)
+            {
+                foreach (var viewModel in FindViewModels(duplicatedNumber))
+                {
+                    if (!(viewModel is IIsDuplicated duplicatedViewModel)) continue;
+                    duplicatedViewModel.IsDirectDuplicated = true;
+                }
+            }
+
+            RefreshValues();
+        }
+
+        public bool MarkIndirectDuplicatedNumbers(
+            SudokuBoxCoordinate parentCoordinate,
+            SudokuBoxCoordinate coordinate,
+            SudokuBoxNumbers number)
+        {
+            if (!ParentCoordinate.HasValue) return false;
+            if (ParentCoordinate.Value.X != parentCoordinate.X && ParentCoordinate.Value.Y != parentCoordinate.Y) return false;
+            
+            var foundViewModels = FindViewModels(number);
+
+            var duplicatesFound = false;
+
+            foreach (var foundViewModel in foundViewModels)
+            {
+                if (!(foundViewModel is IIsDuplicated foundDuplicatableViewModel)) continue;
+                var foundModel = foundViewModel.GetModel();
+
+                if (foundModel.Coordinate.X != coordinate.X && foundModel.Coordinate.Y != coordinate.Y) continue;
+                
+                foundDuplicatableViewModel.IsIndirectDuplicated = true;
+                duplicatesFound = true;
+            }
+
+            if (duplicatesFound) RefreshValues();
+
+            return duplicatesFound;
+        }
+
+        public void ResetIndirectDuplication()
+        {
+            foreach (var viewModel in mSudokuBoxViewModels)
+            {
+                if (!(viewModel is IIsDuplicated duplicatableViewModel)) continue;
+                duplicatableViewModel.IsIndirectDuplicated = false;
+            }
         }
 
         private void InitializeSudokuBoxViewModels()

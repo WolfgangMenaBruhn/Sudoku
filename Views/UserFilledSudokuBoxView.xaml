@@ -26,6 +26,9 @@
                         <DataTrigger Binding="{Binding Path=IsSameNumber}" Value="True">
                             <Setter Property="FontWeight" Value="Bold" />
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding Path=IsDuplicated}" Value="True">
+                            <Setter Property="Background" Value="IndianRed" />
+                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Button.Style>

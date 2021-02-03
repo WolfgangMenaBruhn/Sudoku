@@ -6,7 +6,7 @@ using Sudoku.Models;
 
 namespace Sudoku.ViewModels
 {
-    public class PredefinedSudokuBoxViewModel : BaseSudokuBoxViewModel
+    public class PredefinedSudokuBoxViewModel : BaseSudokuBoxViewModel, IIsDuplicated
     {
         private readonly ISudokuService mSudokuService;
 
@@ -51,17 +51,48 @@ namespace Sudoku.ViewModels
 
         public string Number => ((int) Model.Number).ToString();
 
-        public void ChangeNumber(SudokuBoxNumbers newNumber)
+        private bool mIsDuplicated;
+
+        public bool IsDirectDuplicated
+        {
+            get => mIsDuplicated;
+            set
+            {
+                if (value == mIsDuplicated) return;
+                mIsDuplicated = value;
+                RefreshValues();
+            }
+        }
+
+        private bool mIsIndirectDuplicated;
+        public bool IsIndirectDuplicated
+        {
+            get => mIsIndirectDuplicated;
+            set
+            {
+                if (value == mIsIndirectDuplicated) return;
+                mIsIndirectDuplicated = value;
+                RefreshValues();
+            }
+        }
+
+        public bool IsDuplicated => IsDirectDuplicated || IsIndirectDuplicated;
+
+        public void SetNumber(SudokuBoxNumbers newNumber)
         {
             if (Model.IsForControl) return; // change not allowed.
             Model = Model.WithNumber(newNumber);
             RefreshValues();
         }
 
+
         private new void RefreshValues()
         {
             base.RefreshValues();
             RaisePropertyChanged(nameof(Number));
+            RaisePropertyChanged(nameof(IsDirectDuplicated));
+            RaisePropertyChanged(nameof(IsIndirectDuplicated));
+            RaisePropertyChanged(nameof(IsDuplicated));
         }
     }
 }
