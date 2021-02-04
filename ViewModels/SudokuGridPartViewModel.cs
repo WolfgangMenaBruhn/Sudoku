@@ -308,10 +308,19 @@ namespace Sudoku.ViewModels
                 if (!(foundViewModel is IIsDuplicated foundDuplicatableViewModel)) continue;
                 var foundModel = foundViewModel.GetModel();
 
-                if (foundModel.Coordinate.X != coordinate.X && foundModel.Coordinate.Y != coordinate.Y) continue;
-                
-                foundDuplicatableViewModel.IsIndirectDuplicated = true;
-                duplicatesFound = true;
+                if (!foundModel.ParentCoordinate.HasValue) continue;
+
+                // ReSharper disable once PossibleInvalidOperationException
+                if (foundModel.ParentCoordinate.Value.X == parentCoordinate.X && coordinate.X == foundModel.Coordinate.X)
+                {
+                    foundDuplicatableViewModel.IsIndirectDuplicated = true;
+                    duplicatesFound = true;
+                }
+                else if (foundModel.ParentCoordinate.Value.Y == parentCoordinate.Y && coordinate.Y == foundModel.Coordinate.Y)
+                {
+                    foundDuplicatableViewModel.IsIndirectDuplicated = true;
+                    duplicatesFound = true;
+                }
             }
 
             if (duplicatesFound) RefreshValues();

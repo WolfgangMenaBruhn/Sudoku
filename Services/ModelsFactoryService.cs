@@ -30,7 +30,7 @@ namespace Sudoku.Services
         {
             var result = new List<IPredefinedSudokuBox>();
 
-            for (var index = 0; index < 9; index++)
+            for (var index = (int)SudokuBoxNumbers.One - 1; index < (int)SudokuBoxNumbers.Nine; index++)
             {
                 var currentCoordinate = SudokuBoxCoordinate.GetCoordinate(index, mMax3x3Coordinate.X);
                 if (!currentCoordinate.HasValue) throw new ArgumentOutOfRangeException(nameof(currentCoordinate));
@@ -54,7 +54,7 @@ namespace Sudoku.Services
                 var parentCoordinate = SudokuBoxCoordinate.GetCoordinate(parentIndex, mMax3x3Coordinate.X);
                 if (!parentCoordinate.HasValue) throw new ArgumentOutOfRangeException(nameof(parentCoordinate));
 
-                for (var childIndex = 0; childIndex < 9; childIndex++)
+                for (var childIndex = (int)SudokuBoxNumbers.One - 1; childIndex < (int)SudokuBoxNumbers.Nine; childIndex++)
                 {
                     var childCoordinate = SudokuBoxCoordinate.GetCoordinate(childIndex, mMax3x3Coordinate.X);
                     if (!childCoordinate.HasValue) throw new ArgumentOutOfRangeException(nameof(childCoordinate));
