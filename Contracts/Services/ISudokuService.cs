@@ -21,13 +21,25 @@ namespace Sudoku.Contracts.Services
 
         bool IsAllowedChangingUserDefinedNumberToPredefinedNumber();
 
+        bool IsAllowedChangingUserDefinedNumberToNotes();
+
+        bool IsAllowedChangingNotesToUserDefined();
+
         bool IsAllowedSettingUserDefinedNumber();
 
         void ChangeUserDefinedNumberToPredefinedNumber(
             IUserFilledSudokuBox userFilledSudokuBox);
 
+        void ChangeUserDefinedNumberToNotes(
+            IUserFilledSudokuBox userFilledSudokuBox);
+
+        void ChangeNotesToUserDefined(
+            INoteSudokuBox notesBox);
+
         event SudokuService.ChangeUserDefinedToPredefinedNumberRequestedDelegate
             ChangeUserDefinedToPredefinedNumberRequest;
+
+        event SudokuService.ChangeUserDefinedToNotesDelegate ChangeUserDefinedToNotesRequested;
 
         void ChangePredefinedNumberToPredefinedNumber(
             IPredefinedSudokuBox predefinedSudokuBox);
@@ -58,5 +70,11 @@ namespace Sudoku.Contracts.Services
         event SudokuService.CheckForFinishedDelegate CheckForFinishedRequested;
 
         void CheckForFinished();
+
+        event SudokuService.CreateNoteBoxesDelegate CreateNoteBoxesRequested;
+
+        void CreateNoteBoxes();
+
+        event SudokuService.ChangeNotesToUserDefinedDelegate ChangeNotesToUserDefinedRequest;
     }
 }

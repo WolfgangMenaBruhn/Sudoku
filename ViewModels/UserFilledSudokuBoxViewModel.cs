@@ -70,6 +70,9 @@ namespace Sudoku.ViewModels
             if (mSudokuService.IsAllowedChangingUserDefinedNumberToPredefinedNumber())
                 mSudokuService.ChangeUserDefinedNumberToPredefinedNumber(Model);
 
+            if (mSudokuService.IsAllowedChangingUserDefinedNumberToNotes())
+                mSudokuService.ChangeUserDefinedNumberToNotes(Model);
+
             if (mSudokuService.IsAllowedSettingUserDefinedNumber())
             {
                 if (mSudokuService.PredefinedNumber.HasValue)

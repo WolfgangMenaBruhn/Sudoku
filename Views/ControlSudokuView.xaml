@@ -15,7 +15,8 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding NewGameCommand}">New Game</Button>
+        <Button Grid.Row="0" Grid.Column="0" Command="{Binding NewGameCommand}">New Game</Button>
+        <Button Grid.Row="0" Grid.Column="1" Command="{Binding CreateNoteBoxesCommand}">Note Boxes</Button>
 
         <WrapPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
             <Label>Mode:</Label>
@@ -41,8 +42,6 @@
             </WrapPanel.InputBindings>
             <views:SudokuGridPartView DataContext="{Binding ControlGrid}" />
         </WrapPanel>
-        
-
 
     </Grid>
     

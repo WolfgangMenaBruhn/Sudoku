@@ -35,6 +35,57 @@ namespace Sudoku.ViewModels
             mSudokuService.ChangePredefinedToPredefinedNumberRequest += OnChangePredefinedToPredefinedNumberRequested;
             mSudokuService.InformAboutClickedSudokuBox += OnSudokuBoxWasClicked;
             mSudokuService.DeletePredefinedNumberRequest += OnDeletePredefinedNumberRequested;
+            mSudokuService.ChangeUserDefinedToNotesRequested += OnChangeUserDefinedToNotesRequested;
+            mSudokuService.ChangeNotesToUserDefinedRequest += OnChangeNotesToUserDefinedRequest;
+        }
+
+        private void OnChangeNotesToUserDefinedRequest(
+            INoteSudokuBox notesBox)
+        {
+            if (notesBox == null) return;
+
+            var foundViewModel =
+                FindViewModel(
+                    notesBox.Coordinate, notesBox.ParentCoordinate) as NoteSudokuBoxViewModel;
+            if (foundViewModel == null) return;
+
+            var viewModelIndex = mSudokuBoxViewModels.IndexOf(foundViewModel);
+            var newPredefinedViewModel =
+                new UserFilledSudokuBoxViewModel(
+                    mModelsFactoryService.GetUserDefinedSudokuBox(
+                        notesBox.Coordinate,
+                        notesBox.ParentCoordinate,
+                        null),
+                    mSudokuService);
+
+            mSudokuBoxViewModels.RemoveAt(viewModelIndex);
+            mSudokuBoxViewModels.Insert(viewModelIndex, newPredefinedViewModel);
+
+            RefreshValues();
+        }
+
+        private void OnChangeUserDefinedToNotesRequested(
+            IUserFilledSudokuBox userFilledSudokuBox)
+        {
+            if (userFilledSudokuBox == null) return;
+
+            var foundViewModel = FindViewModel(userFilledSudokuBox.Coordinate, userFilledSudokuBox.ParentCoordinate) as UserFilledSudokuBoxViewModel;
+            if (foundViewModel == null) return;
+
+            // Replace user defined view model with predefined view model:
+            var viewModelIndex = mSudokuBoxViewModels.IndexOf(foundViewModel);
+
+            var newNoteViewModel =
+                new NoteSudokuBoxViewModel(
+                    mModelsFactoryService.GetNoteSudokuBox(
+                        userFilledSudokuBox.Coordinate,
+                        userFilledSudokuBox.ParentCoordinate),
+                    mSudokuService);
+
+            mSudokuBoxViewModels.RemoveAt(viewModelIndex);
+            mSudokuBoxViewModels.Insert(viewModelIndex, newNoteViewModel);
+
+            RefreshValues();
         }
 
         private void CheckSudokuBoxes()
@@ -348,7 +399,7 @@ namespace Sudoku.ViewModels
                 switch (sudokuBox)
                 {
                     case INoteSudokuBox noteSudokuBox:
-                        mSudokuBoxViewModels.Add(new NoteSudokuBoxViewModel(noteSudokuBox));
+                        mSudokuBoxViewModels.Add(new NoteSudokuBoxViewModel(noteSudokuBox, mSudokuService));
                         break;
                     case IPredefinedSudokuBox predefinedSudokuBox:
                         mSudokuBoxViewModels.Add(new PredefinedSudokuBoxViewModel(predefinedSudokuBox, mSudokuService));
@@ -420,6 +471,9 @@ namespace Sudoku.ViewModels
             mSudokuService.ChangeUserDefinedToPredefinedNumberRequest -= OnChangeUserDefinedToPredefinedNumberRequested;
             mSudokuService.ChangePredefinedToPredefinedNumberRequest -= OnChangePredefinedToPredefinedNumberRequested;
             mSudokuService.InformAboutClickedSudokuBox -= OnSudokuBoxWasClicked;
+            mSudokuService.DeletePredefinedNumberRequest -= OnDeletePredefinedNumberRequested;
+            mSudokuService.ChangeUserDefinedToNotesRequested -= OnChangeUserDefinedToNotesRequested;
+            mSudokuService.ChangeNotesToUserDefinedRequest -= OnChangeNotesToUserDefinedRequest;
             await base.CloseAsync();
         }
     }

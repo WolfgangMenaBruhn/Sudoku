@@ -18,6 +18,17 @@ namespace Sudoku.Services
             return new PredefinedSudokuBox(coordinate, parentCoordinate, number);
         }
 
+        public INoteSudokuBox GetNoteSudokuBox(
+            SudokuBoxCoordinate coordinate,
+            SudokuBoxCoordinate parentCoordinate)
+        {
+            return 
+                new NoteSudokuBox(
+                    coordinate, 
+                    parentCoordinate, 
+                    new List<SudokuBoxNumbers>());
+        }
+
         public IUserFilledSudokuBox GetUserDefinedSudokuBox(
             SudokuBoxCoordinate coordinate,
             SudokuBoxCoordinate parentCoordinate,

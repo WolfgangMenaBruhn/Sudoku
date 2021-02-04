@@ -140,6 +140,8 @@ namespace Sudoku.ViewModels
         protected override async Task CloseAsync()
         {
             mSudokuService.ResetRequest -= OnResetRequested;
+            mSudokuService.MarkDuplicatedNumbersRequested -= OnMarkDuplicatedNumbersRequested;
+            mSudokuService.CheckForFinishedRequested -= OnCheckForFinishedRequested;
             await base.CloseAsync();
         }
     }

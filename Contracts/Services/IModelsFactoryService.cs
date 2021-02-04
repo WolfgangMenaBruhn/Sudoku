@@ -13,6 +13,10 @@ namespace Sudoku.Contracts.Services
             SudokuBoxCoordinate? parentCoordinate,
             SudokuBoxNumbers number);
 
+        INoteSudokuBox GetNoteSudokuBox(
+            SudokuBoxCoordinate coordinate,
+            SudokuBoxCoordinate parentCoordinate);
+
         IUserFilledSudokuBox GetUserDefinedSudokuBox(
             SudokuBoxCoordinate coordinate,
             SudokuBoxCoordinate parentCoordinate,

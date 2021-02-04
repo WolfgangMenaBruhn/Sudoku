@@ -9,7 +9,7 @@
         </Grid.RowDefinitions>
 
         <Button
-            MinHeight="36" MinWidth="36"
+            MinHeight="60" MinWidth="60"
             Content="{Binding Number}"
             Command="{Binding ClickCommand}"
             FontSize="36"

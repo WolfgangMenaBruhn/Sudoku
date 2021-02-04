@@ -42,6 +42,24 @@ namespace Sudoku.ViewModels
 
         #endregion
 
+        #region create note boxes command
+
+        private Command mCreateNoteBoxesCommand;
+
+        // ReSharper disable once UnusedMember.Global
+        public Command CreateNoteBoxesCommand =>
+            mCreateNoteBoxesCommand ??
+            (mCreateNoteBoxesCommand =
+                new Command(
+                    ExecuteCreateNoteBoxesCommand));
+
+        private void ExecuteCreateNoteBoxesCommand()
+        {
+            mSudokuService.CreateNoteBoxes();
+        }
+
+        #endregion
+
         #region Key 0 command
 
         private Command mKey0Command;

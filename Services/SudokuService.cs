@@ -19,6 +19,11 @@ namespace Sudoku.Services
 
         public event ChangeUserDefinedToPredefinedNumberRequestedDelegate ChangeUserDefinedToPredefinedNumberRequest;
 
+        public delegate void ChangeUserDefinedToNotesDelegate(
+            IUserFilledSudokuBox userDefinedBox);
+
+        public event ChangeUserDefinedToNotesDelegate ChangeUserDefinedToNotesRequested;
+
         public delegate void ChangePredefinedToPredefinedNumberRequestedDelegate(
             IPredefinedSudokuBox preDefinedSudokuBox,
             SudokuBoxNumbers number);
@@ -46,6 +51,14 @@ namespace Sudoku.Services
 
         public event CheckForFinishedDelegate CheckForFinishedRequested;
 
+        public delegate void CreateNoteBoxesDelegate();
+
+        public event CreateNoteBoxesDelegate CreateNoteBoxesRequested;
+
+        public delegate void ChangeNotesToUserDefinedDelegate(INoteSudokuBox notesBox);
+
+        public event ChangeNotesToUserDefinedDelegate ChangeNotesToUserDefinedRequest;
+
         #endregion
 
         public SudokuService()
@@ -53,6 +66,11 @@ namespace Sudoku.Services
             Reset();
         }
 
+        public void CreateNoteBoxes()
+        {
+            CreateNoteBoxesRequested?.Invoke();
+        }
+        
         public void CheckForFinished()
         {
             CheckForFinishedRequested?.Invoke();
@@ -139,8 +157,29 @@ namespace Sudoku.Services
             }
         }
 
+        public void ChangeUserDefinedNumberToNotes(
+            IUserFilledSudokuBox userFilledSudokuBox)
+        {
+            if (userFilledSudokuBox == null) return;
+
+            ChangeUserDefinedToNotesRequested?.Invoke(userFilledSudokuBox);
+        }
+
+        public void ChangeNotesToUserDefined(
+            INoteSudokuBox notesBox)
+        {
+            if (notesBox == null) return;
+            ChangeNotesToUserDefinedRequest?.Invoke(notesBox);
+        }
+
         public bool IsAllowedChangingUserDefinedNumberToPredefinedNumber() 
             => PredefinedNumber.HasValue && Mode.HasValue && Mode.Value == ControlSudokuMode.PreDefining;
+
+        public bool IsAllowedChangingUserDefinedNumberToNotes()
+            => Mode.HasValue && Mode.Value == ControlSudokuMode.Notes;
+
+        public bool IsAllowedChangingNotesToUserDefined()
+            => Mode.HasValue && Mode.Value == ControlSudokuMode.UserDefining;
 
         public bool IsAllowedSettingUserDefinedNumber()
             => PredefinedNumber.HasValue && Mode.HasValue && Mode.Value == ControlSudokuMode.UserDefining;
