@@ -311,12 +311,14 @@ namespace Sudoku.ViewModels
                 if (!foundModel.ParentCoordinate.HasValue) continue;
 
                 // ReSharper disable once PossibleInvalidOperationException
-                if (foundModel.ParentCoordinate.Value.X == parentCoordinate.X && coordinate.X == foundModel.Coordinate.X)
+                if (foundModel.ParentCoordinate.Value.X == parentCoordinate.X && 
+                    coordinate.X == foundModel.Coordinate.X)
                 {
                     foundDuplicatableViewModel.IsIndirectDuplicated = true;
                     duplicatesFound = true;
                 }
-                else if (foundModel.ParentCoordinate.Value.Y == parentCoordinate.Y && coordinate.Y == foundModel.Coordinate.Y)
+                else if (foundModel.ParentCoordinate.Value.Y == parentCoordinate.Y && 
+                         coordinate.Y == foundModel.Coordinate.Y)
                 {
                     foundDuplicatableViewModel.IsIndirectDuplicated = true;
                     duplicatesFound = true;
@@ -358,6 +360,25 @@ namespace Sudoku.ViewModels
                         throw new ArgumentOutOfRangeException(nameof(sudokuBox));
                 }
             }
+        }
+
+        public bool IsFinished()
+        {
+            foreach (var viewModel in mSudokuBoxViewModels)
+            {
+                if (!(viewModel is IIsDuplicated duplicatedViewModel)) return false;
+                if (duplicatedViewModel.IsDuplicated) return false;
+
+                switch (viewModel.GetModel())
+                {
+                    case IUserFilledSudokuBox userDefinedBox:
+                        if (!userDefinedBox.Number.HasValue)
+                            return false;
+                        break;
+                }
+            }
+
+            return true;
         }
 
         #region view box models

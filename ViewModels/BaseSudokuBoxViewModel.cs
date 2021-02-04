@@ -50,6 +50,7 @@ namespace Sudoku.ViewModels
             RaisePropertyChanged(nameof(IsSelected));
             RaisePropertyChanged(nameof(IsHighlighted));
             RaisePropertyChanged(nameof(IsSameNumber));
+            RaisePropertyChanged(nameof(IsSelectedOrHighlighted));
         }
 
         public ISudokuBoxBase GetModel() => mModel;

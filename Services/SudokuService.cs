@@ -42,11 +42,20 @@ namespace Sudoku.Services
 
         public event MarkDuplicatedNumbersDelegate MarkDuplicatedNumbersRequested;
 
+        public delegate void CheckForFinishedDelegate();
+
+        public event CheckForFinishedDelegate CheckForFinishedRequested;
+
         #endregion
 
         public SudokuService()
         {
             Reset();
+        }
+
+        public void CheckForFinished()
+        {
+            CheckForFinishedRequested?.Invoke();
         }
 
         public void ConsiderControlPressedKey(SudokuBoxNumbers? number)

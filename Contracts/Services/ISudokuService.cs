@@ -54,5 +54,9 @@ namespace Sudoku.Contracts.Services
         event SudokuService.DeletePredefinedNumberDelegate DeletePredefinedNumberRequest;
 
         event SudokuService.MarkDuplicatedNumbersDelegate MarkDuplicatedNumbersRequested;
+
+        event SudokuService.CheckForFinishedDelegate CheckForFinishedRequested;
+
+        void CheckForFinished();
     }
 }

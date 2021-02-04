@@ -2,6 +2,7 @@
 using System.Linq;
 using Catel.MVVM;
 using System.Threading.Tasks;
+using Catel.Services;
 using Sudoku.Contracts.Services;
 using Sudoku.Helper.Extensions;
 using Sudoku.Models;
@@ -12,18 +13,31 @@ namespace Sudoku.ViewModels
     {
         private readonly IModelsFactoryService mModelsFactoryService;
         private readonly ISudokuService mSudokuService;
+        private readonly IMessageService mMessageService;
         private readonly List<SudokuGridPartViewModel> mSudokuBoxViewModels = new List<SudokuGridPartViewModel>(9);
 
         public SudokuGridViewModel(
             IModelsFactoryService modelsFactoryService,
-            ISudokuService sudokuService)
+            ISudokuService sudokuService,
+            IMessageService messageService)
         {
             mModelsFactoryService = modelsFactoryService;
             mSudokuService = sudokuService;
+            mMessageService = messageService;
             InitializeSudokuBoxViewModels();
 
             mSudokuService.ResetRequest += OnResetRequested;
             mSudokuService.MarkDuplicatedNumbersRequested += OnMarkDuplicatedNumbersRequested;
+            mSudokuService.CheckForFinishedRequested += OnCheckForFinishedRequested;
+        }
+
+        private void OnCheckForFinishedRequested()
+        {
+            if (!IsFinished()) return;
+
+            mMessageService.ShowInformationAsync(
+                "Game finished!",
+                "Sudoku:");
         }
 
         private void OnMarkDuplicatedNumbersRequested()
@@ -70,6 +84,14 @@ namespace Sudoku.ViewModels
         private void OnResetRequested()
         {
             InitializeSudokuBoxViewModels();
+        }
+
+        public bool IsFinished()
+        {
+            foreach (var viewModel in mSudokuBoxViewModels)
+                if (!viewModel.IsFinished()) return false;
+
+            return true;
         }
 
         private void InitializeSudokuBoxViewModels()

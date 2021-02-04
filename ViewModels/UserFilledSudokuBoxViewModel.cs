@@ -76,6 +76,8 @@ namespace Sudoku.ViewModels
                 {
                     Model = Model.WithNumber(mSudokuService.PredefinedNumber.Value);
                     RefreshValues();
+
+                    mSudokuService.CheckForFinished();
                 }
             }
 
