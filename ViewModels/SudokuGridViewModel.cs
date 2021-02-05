@@ -29,6 +29,36 @@ namespace Sudoku.ViewModels
             mSudokuService.ResetRequest += OnResetRequested;
             mSudokuService.MarkDuplicatedNumbersRequested += OnMarkDuplicatedNumbersRequested;
             mSudokuService.CheckForFinishedRequested += OnCheckForFinishedRequested;
+            mSudokuService.ExistentNumbersRequested += OnGetExistentNumbersRequested;
+        }
+
+        private IEnumerable<SudokuBoxNumbers> OnGetExistentNumbersRequested(
+            (SudokuBoxCoordinate parentCoordinate, SudokuBoxCoordinate coordinate) gridCoordinate)
+        {
+            var foundNumbers = new List<SudokuBoxNumbers>();
+
+            for (int index = (int) SudokuBoxNumbers.One - 1; index < (int) SudokuBoxNumbers.Nine; index++)
+            {
+                var currentViewModel = mSudokuBoxViewModels[index];
+                if (!currentViewModel.ParentCoordinate.HasValue) continue;
+
+                if (currentViewModel.ParentCoordinate.Value.X == gridCoordinate.parentCoordinate.X &&
+                    currentViewModel.ParentCoordinate.Value.Y == gridCoordinate.parentCoordinate.Y)
+                    continue;
+
+                if (currentViewModel.ParentCoordinate.Value.X != gridCoordinate.parentCoordinate.X &&
+                    currentViewModel.ParentCoordinate.Value.Y != gridCoordinate.parentCoordinate.Y)
+                    continue;
+
+                foreach (var number in mModelsFactoryService.SudokuNumbers())
+                {
+                    if (currentViewModel.MarkIndirectDuplicatedNumbers(gridCoordinate.parentCoordinate,
+                        gridCoordinate.coordinate, number, false))
+                        foundNumbers.Add(number);
+                }
+            }
+
+            return foundNumbers;
         }
 
         private void OnCheckForFinishedRequested()
@@ -61,7 +91,11 @@ namespace Sudoku.ViewModels
                     var childViewModel = mSudokuBoxViewModels[subIndex];
                     if (!childViewModel.ParentCoordinate.HasValue) continue;
 
-                    var parentNumbers = parentViewModel.GetAllNumbers().Distinct().ToList();
+                    var parentNumbers =
+                        parentViewModel
+                            .GetAllNumbers(mModelsFactoryService.EmptyCoordinates())
+                            .Distinct()
+                            .ToList();
 
                     foreach (var currentParentNumber in parentNumbers)
                     {
@@ -142,6 +176,7 @@ namespace Sudoku.ViewModels
             mSudokuService.ResetRequest -= OnResetRequested;
             mSudokuService.MarkDuplicatedNumbersRequested -= OnMarkDuplicatedNumbersRequested;
             mSudokuService.CheckForFinishedRequested -= OnCheckForFinishedRequested;
+            mSudokuService.ExistentNumbersRequested -= OnGetExistentNumbersRequested;
             await base.CloseAsync();
         }
     }

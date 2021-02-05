@@ -1,4 +1,5 @@
-﻿using Sudoku.Contracts.Models;
+﻿using System.Collections.Generic;
+using Sudoku.Contracts.Models;
 using Sudoku.Models;
 using Sudoku.Services;
 using Sudoku.ViewModels;
@@ -76,5 +77,10 @@ namespace Sudoku.Contracts.Services
         void CreateNoteBoxes();
 
         event SudokuService.ChangeNotesToUserDefinedDelegate ChangeNotesToUserDefinedRequest;
+
+        IEnumerable<SudokuBoxNumbers> GetExistentNumbers(
+            (SudokuBoxCoordinate parentCoordinate, SudokuBoxCoordinate coordinate) gridCoordinate);
+
+        event SudokuService.ExistentNumbersDelegate ExistentNumbersRequested;
     }
 }

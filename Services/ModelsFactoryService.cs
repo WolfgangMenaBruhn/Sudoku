@@ -18,15 +18,26 @@ namespace Sudoku.Services
             return new PredefinedSudokuBox(coordinate, parentCoordinate, number);
         }
 
+        public IEnumerable<SudokuBoxNumbers> SudokuNumbers() => new List<SudokuBoxNumbers>
+        {
+            SudokuBoxNumbers.One, SudokuBoxNumbers.Two, SudokuBoxNumbers.Three, SudokuBoxNumbers.Four,
+            SudokuBoxNumbers.Five, SudokuBoxNumbers.Six, SudokuBoxNumbers.Seven, SudokuBoxNumbers.Eight,
+            SudokuBoxNumbers.Nine
+        };
+
+        public (SudokuBoxCoordinate? parentCoordinate, SudokuBoxCoordinate? coordinate) EmptyCoordinates() =>
+            (null, null);
+
         public INoteSudokuBox GetNoteSudokuBox(
             SudokuBoxCoordinate coordinate,
-            SudokuBoxCoordinate parentCoordinate)
+            SudokuBoxCoordinate parentCoordinate,
+            IEnumerable<SudokuBoxNumbers> noteNumbers)
         {
             return 
                 new NoteSudokuBox(
                     coordinate, 
                     parentCoordinate, 
-                    new List<SudokuBoxNumbers>());
+                    new List<SudokuBoxNumbers>(noteNumbers));
         }
 
         public IUserFilledSudokuBox GetUserDefinedSudokuBox(

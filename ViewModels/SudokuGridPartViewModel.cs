@@ -15,7 +15,7 @@ namespace Sudoku.ViewModels
         private readonly IEnumerable<ISudokuBoxBase> mSudokuBoxes;
         private readonly ISudokuService mSudokuService;
         private readonly IModelsFactoryService mModelsFactoryService;
-
+        
         public SudokuGridPartViewModel(
             IEnumerable<ISudokuBoxBase> sudokuBoxes,
             ISudokuService sudokuService,
@@ -75,11 +75,23 @@ namespace Sudoku.ViewModels
             // Replace user defined view model with predefined view model:
             var viewModelIndex = mSudokuBoxViewModels.IndexOf(foundViewModel);
 
+            var directNumbers =
+                GetAllNumbers((userFilledSudokuBox.ParentCoordinate, userFilledSudokuBox.Coordinate));
+
+            var remainingNumbers = mModelsFactoryService.SudokuNumbers().Except(directNumbers);
+
+            var indirectNumbers =
+                mSudokuService.GetExistentNumbers(
+                    (userFilledSudokuBox.ParentCoordinate, userFilledSudokuBox.Coordinate));
+
+            if (indirectNumbers != null) remainingNumbers = remainingNumbers.Except(indirectNumbers);
+
             var newNoteViewModel =
                 new NoteSudokuBoxViewModel(
                     mModelsFactoryService.GetNoteSudokuBox(
                         userFilledSudokuBox.Coordinate,
-                        userFilledSudokuBox.ParentCoordinate),
+                        userFilledSudokuBox.ParentCoordinate,
+                        new List<SudokuBoxNumbers>(remainingNumbers)),
                     mSudokuService);
 
             mSudokuBoxViewModels.RemoveAt(viewModelIndex);
@@ -295,9 +307,24 @@ namespace Sudoku.ViewModels
         }
 
         public IEnumerable<SudokuBoxNumbers> GetAllNumbers(
+            (SudokuBoxCoordinate? parentCoordinate, SudokuBoxCoordinate? coordinate) excludedCoordinates,
             bool mustHaveParentCoordinate = true)
         {
             var result = new List<SudokuBoxNumbers>();
+
+            bool addCoordinate((SudokuBoxCoordinate? parentCoordinate, SudokuBoxCoordinate coordinate) coordinates)
+            {
+                var excludeCoordinates =
+                    excludedCoordinates.parentCoordinate.HasValue &&
+                    excludedCoordinates.coordinate.HasValue;
+
+                if (!excludeCoordinates) return true;
+                if (!coordinates.parentCoordinate.HasValue) return false;
+
+                return
+                    !(coordinates.parentCoordinate.Value.Equals(excludedCoordinates.parentCoordinate.Value) &&
+                      coordinates.coordinate.Equals(excludedCoordinates.coordinate.Value));
+            }
 
             foreach (var viewModel in mSudokuBoxViewModels)
             {
@@ -306,11 +333,13 @@ namespace Sudoku.ViewModels
                 {
                     case IPredefinedSudokuBox predefinedSudokuBox:
                         if (!mustHaveParentCoordinate || predefinedSudokuBox.ParentCoordinate != null)
+                            if (addCoordinate((predefinedSudokuBox.ParentCoordinate, predefinedSudokuBox.Coordinate)))
                                 result.Add(predefinedSudokuBox.Number);
                         break;
                     case IUserFilledSudokuBox userFilledSudoku:
                         if (userFilledSudoku.Number.HasValue)
-                            result.Add(userFilledSudoku.Number.Value);
+                            if (addCoordinate((userFilledSudoku.ParentCoordinate, userFilledSudoku.Coordinate)))
+                                result.Add(userFilledSudoku.Number.Value);
                         break;
                 }
             }
@@ -321,7 +350,7 @@ namespace Sudoku.ViewModels
         public void MarkDirectDuplicatedNumbers()
         {
             var duplicatedNumbers =
-                GetAllNumbers()
+                GetAllNumbers(mModelsFactoryService.EmptyCoordinates())
                     .GroupBy(n => n)
                     .Where(g => g.Count() > 1)
                     .Select(x =>x.Key);
@@ -345,7 +374,8 @@ namespace Sudoku.ViewModels
         public bool MarkIndirectDuplicatedNumbers(
             SudokuBoxCoordinate parentCoordinate,
             SudokuBoxCoordinate coordinate,
-            SudokuBoxNumbers number)
+            SudokuBoxNumbers number,
+            bool mark = true)
         {
             if (!ParentCoordinate.HasValue) return false;
             if (ParentCoordinate.Value.X != parentCoordinate.X && ParentCoordinate.Value.Y != parentCoordinate.Y) return false;
@@ -365,13 +395,13 @@ namespace Sudoku.ViewModels
                 if (foundModel.ParentCoordinate.Value.X == parentCoordinate.X && 
                     coordinate.X == foundModel.Coordinate.X)
                 {
-                    foundDuplicatableViewModel.IsIndirectDuplicated = true;
+                    if (mark) foundDuplicatableViewModel.IsIndirectDuplicated = true;
                     duplicatesFound = true;
                 }
                 else if (foundModel.ParentCoordinate.Value.Y == parentCoordinate.Y && 
                          coordinate.Y == foundModel.Coordinate.Y)
                 {
-                    foundDuplicatableViewModel.IsIndirectDuplicated = true;
+                    if (mark) foundDuplicatableViewModel.IsIndirectDuplicated = true;
                     duplicatesFound = true;
                 }
             }

@@ -15,7 +15,10 @@ namespace Sudoku.Contracts.Services
 
         INoteSudokuBox GetNoteSudokuBox(
             SudokuBoxCoordinate coordinate,
-            SudokuBoxCoordinate parentCoordinate);
+            SudokuBoxCoordinate parentCoordinate,
+            IEnumerable<SudokuBoxNumbers> noteNumbers);
+
+        (SudokuBoxCoordinate? parentCoordinate, SudokuBoxCoordinate? coordinate) EmptyCoordinates();
 
         IUserFilledSudokuBox GetUserDefinedSudokuBox(
             SudokuBoxCoordinate coordinate,
@@ -23,5 +26,7 @@ namespace Sudoku.Contracts.Services
             SudokuBoxNumbers? number);
 
         IEnumerable<IUserFilledSudokuBox> Get81EmptyUserDefinedSudokuBoxes();
+
+        IEnumerable<SudokuBoxNumbers> SudokuNumbers();
     }
 }
