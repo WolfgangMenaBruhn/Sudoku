@@ -82,5 +82,7 @@ namespace Sudoku.Contracts.Services
             (SudokuBoxCoordinate parentCoordinate, SudokuBoxCoordinate coordinate) gridCoordinate);
 
         event SudokuService.ExistentNumbersDelegate ExistentNumbersRequested;
+
+        event SudokuService.ModeChangedDelegate ModeChanged;
     }
 }

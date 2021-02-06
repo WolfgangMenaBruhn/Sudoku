@@ -65,6 +65,10 @@ namespace Sudoku.Services
 
         public event ExistentNumbersDelegate ExistentNumbersRequested;
 
+        public delegate void ModeChangedDelegate(ControlSudokuMode mode);
+
+        public event ModeChangedDelegate ModeChanged;
+
         #endregion
 
         public SudokuService()
@@ -138,6 +142,7 @@ namespace Sudoku.Services
         public void SetMode(ControlSudokuMode mode)
         {
             Mode = mode;
+            ModeChanged?.Invoke(mode);
         }
 
         public ControlSudokuMode? Mode { get; protected set; }

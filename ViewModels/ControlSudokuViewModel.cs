@@ -20,6 +20,14 @@ namespace Sudoku.ViewModels
 
             ControlSudokuMode = ControlSudokuMode.PreDefining;
             InitializeControlGrid();
+
+            mSudokuService.ModeChanged += OnModeChanged;
+        }
+
+        private void OnModeChanged(ControlSudokuMode mode)
+        {
+            mControlSudokuMode = mode; // Intentionally using field
+            RefreshValues();
         }
 
         #region new game command
@@ -294,6 +302,7 @@ namespace Sudoku.ViewModels
 
         protected override async Task CloseAsync()
         {
+            mSudokuService.ModeChanged -= OnModeChanged;
             await base.CloseAsync();
         }
     }
