@@ -9,6 +9,8 @@ namespace Sudoku.Contracts.Models
 
         INoteSudokuBox WithOrWithoutNumber(SudokuBoxNumbers number);
 
+        INoteSudokuBox WithNumbers(IEnumerable<SudokuBoxNumbers> numbers);
+
         new SudokuBoxCoordinate ParentCoordinate { get; }
     }
 }

@@ -73,6 +73,10 @@ namespace Sudoku.Services
 
         public event PredefinedNumberChangedDelegate PredefinedNumberChanged;
 
+        public delegate void RefreshNotesDelegate();
+
+        public event RefreshNotesDelegate RefreshNotesRequested;
+
         #endregion
 
         public SudokuService()
@@ -94,6 +98,7 @@ namespace Sudoku.Services
         public void CheckForFinished()
         {
             CheckForFinishedRequested?.Invoke();
+            RefreshNotesRequested?.Invoke();
         }
 
         public void ConsiderControlPressedKey(SudokuBoxNumbers? number)

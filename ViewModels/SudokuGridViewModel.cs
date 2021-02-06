@@ -14,7 +14,7 @@ namespace Sudoku.ViewModels
         private readonly IModelsFactoryService mModelsFactoryService;
         private readonly ISudokuService mSudokuService;
         private readonly IMessageService mMessageService;
-        private readonly List<SudokuGridPartViewModel> mSudokuBoxViewModels = new List<SudokuGridPartViewModel>(9);
+        private readonly List<SudokuGridPartViewModel> mSudokuBoxViewModels = new List<SudokuGridPartViewModel>((int)SudokuBoxNumbers.Nine);
 
         public SudokuGridViewModel(
             IModelsFactoryService modelsFactoryService,

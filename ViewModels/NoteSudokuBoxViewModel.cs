@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Catel.MVVM;
 using Sudoku.Contracts.Models;
 using Sudoku.Contracts.Services;
+using Sudoku.Models;
 
 namespace Sudoku.ViewModels
 {
@@ -254,11 +256,17 @@ namespace Sudoku.ViewModels
                 return;
             }
 
-            Model = Model.WithOrWithoutNumber(Models.SudokuBoxNumbers.Nine);
+            Model = Model.WithOrWithoutNumber(SudokuBoxNumbers.Nine);
             RefreshValues();
         }
 
         #endregion
+
+        public void SetNumbers(IEnumerable<SudokuBoxNumbers> numbers)
+        {
+            Model = Model.WithNumbers(numbers);
+            RefreshValues();
+        }
 
         private new void RefreshValues()
         {

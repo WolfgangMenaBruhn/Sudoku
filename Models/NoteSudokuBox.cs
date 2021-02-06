@@ -20,6 +20,14 @@ namespace Sudoku.Models
         // ReSharper disable once PossibleInvalidOperationException
         public new SudokuBoxCoordinate ParentCoordinate => base.ParentCoordinate.Value;
 
+        public INoteSudokuBox WithNumbers(IEnumerable<SudokuBoxNumbers> numbers)
+        {
+            return new NoteSudokuBox(
+                Coordinate,
+                ParentCoordinate, 
+                new List<SudokuBoxNumbers>(numbers));
+        }
+
         public INoteSudokuBox WithOrWithoutNumber(SudokuBoxNumbers number)
         {
             var numbers = new List<SudokuBoxNumbers>(Numbers);

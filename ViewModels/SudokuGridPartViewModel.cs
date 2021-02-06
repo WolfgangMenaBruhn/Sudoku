@@ -37,6 +37,7 @@ namespace Sudoku.ViewModels
             mSudokuService.DeletePredefinedNumberRequest += OnDeletePredefinedNumberRequested;
             mSudokuService.ChangeUserDefinedToNotesRequested += OnChangeUserDefinedToNotesRequested;
             mSudokuService.ChangeNotesToUserDefinedRequest += OnChangeNotesToUserDefinedRequest;
+            mSudokuService.RefreshNotesRequested += OnRefreshUserNotesRequested;
         }
 
         private void OnChangeNotesToUserDefinedRequest(
@@ -75,16 +76,18 @@ namespace Sudoku.ViewModels
             // Replace user defined view model with predefined view model:
             var viewModelIndex = mSudokuBoxViewModels.IndexOf(foundViewModel);
 
-            var directNumbers =
+            var numbersInSameGrid =
                 GetAllNumbers((userFilledSudokuBox.ParentCoordinate, userFilledSudokuBox.Coordinate));
 
-            var remainingNumbers = mModelsFactoryService.SudokuNumbers().Except(directNumbers);
+            var remainingNumbers =
+                mModelsFactoryService.SudokuNumbers().Except(numbersInSameGrid);
 
-            var indirectNumbers =
+            var numbersInOtherGrids =
                 mSudokuService.GetExistentNumbers(
                     (userFilledSudokuBox.ParentCoordinate, userFilledSudokuBox.Coordinate));
 
-            if (indirectNumbers != null) remainingNumbers = remainingNumbers.Except(indirectNumbers);
+            if (numbersInOtherGrids != null)
+                remainingNumbers = remainingNumbers.Except(numbersInOtherGrids);
 
             var newNoteViewModel =
                 new NoteSudokuBoxViewModel(
@@ -98,6 +101,31 @@ namespace Sudoku.ViewModels
             mSudokuBoxViewModels.Insert(viewModelIndex, newNoteViewModel);
 
             RefreshValues();
+        }
+
+        private void OnRefreshUserNotesRequested()
+        {
+            foreach (var viewModel in mSudokuBoxViewModels)
+            {
+                if (!(viewModel is NoteSudokuBoxViewModel noteViewModel)) continue;
+
+                var model = noteViewModel.Model;
+
+                var numberInSameGrid =
+                    GetAllNumbers((model.ParentCoordinate, model.Coordinate));
+
+                var remainingNumbers =
+                    mModelsFactoryService.SudokuNumbers().Except(numberInSameGrid);
+
+                var numbersInOtherGrids =
+                    mSudokuService.GetExistentNumbers(
+                        (model.ParentCoordinate, model.Coordinate));
+                
+                if (numbersInOtherGrids != null) 
+                    remainingNumbers = remainingNumbers.Except(numbersInOtherGrids);
+
+                noteViewModel.SetNumbers(remainingNumbers);
+            }
         }
 
         private void CheckSudokuBoxes()
