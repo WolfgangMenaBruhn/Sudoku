@@ -258,6 +258,7 @@ namespace Sudoku.Services
                     clickedSudokuBox.Coordinate);
             }
 
+            // Change to user defining mode if clicked on predefined number in note mode
             if (clickedPredefinedBox != null && !clickedPredefinedBox.IsForControl && Mode.HasValue && Mode.Value == ControlSudokuMode.Notes)
             {
                 SetMode(ControlSudokuMode.UserDefining);
