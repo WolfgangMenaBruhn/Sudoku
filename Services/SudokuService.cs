@@ -69,6 +69,10 @@ namespace Sudoku.Services
 
         public event ModeChangedDelegate ModeChanged;
 
+        public delegate void PredefinedNumberChangedDelegate(SudokuBoxNumbers? predefinedNumber);
+
+        public event PredefinedNumberChangedDelegate PredefinedNumberChanged;
+
         #endregion
 
         public SudokuService()
@@ -152,7 +156,16 @@ namespace Sudoku.Services
             PredefinedNumber = predefinedNumber;
         }
 
-        public SudokuBoxNumbers? PredefinedNumber { get; protected set; }
+        private SudokuBoxNumbers? mPredefinedNumber;
+        public SudokuBoxNumbers? PredefinedNumber
+        {
+            get => mPredefinedNumber;
+            protected set
+            {
+                mPredefinedNumber = value;
+                PredefinedNumberChanged?.Invoke(value);
+            }
+        }
 
         public bool IsAllowedSettingPredefinedNumber(bool isControlContext) => isControlContext;
 
@@ -223,22 +236,42 @@ namespace Sudoku.Services
 
         private void Reset()
         {
-            mCurrentParentCoordinate = new SudokuBoxCoordinate(SudokuBoxNumbers.One, SudokuBoxNumbers.One);
-            mCurrentChildCoordinate = new SudokuBoxCoordinate(SudokuBoxNumbers.One, SudokuBoxNumbers.One);
+            AdaptCurrentCoordinates(
+                new SudokuBoxCoordinate(
+                    SudokuBoxNumbers.One, 
+                    SudokuBoxNumbers.One), 
+                new SudokuBoxCoordinate(
+                    SudokuBoxNumbers.One, 
+                    SudokuBoxNumbers.One));
         }
 
         public void SudokuBoxWasClicked(SudokuBoxBase clickedSudokuBox)
         {
-            if ((clickedSudokuBox is IPredefinedSudokuBox predefinedBox && !predefinedBox.IsForControl ) ||
+            var clickedPredefinedBox = clickedSudokuBox as IPredefinedSudokuBox;
+            
+            if ((clickedPredefinedBox != null && !clickedPredefinedBox.IsForControl) ||
                 clickedSudokuBox is IUserFilledSudokuBox)
             {
-                mCurrentChildCoordinate = clickedSudokuBox.Coordinate;
                 // ReSharper disable once PossibleInvalidOperationException
-                mCurrentParentCoordinate = clickedSudokuBox.ParentCoordinate.Value;
+                AdaptCurrentCoordinates(
+                    clickedSudokuBox.ParentCoordinate.Value, 
+                    clickedSudokuBox.Coordinate);
+            }
+
+            if (clickedPredefinedBox != null && !clickedPredefinedBox.IsForControl && Mode.HasValue && Mode.Value == ControlSudokuMode.Notes)
+            {
+                SetMode(ControlSudokuMode.UserDefining);
+                SetPredefinedNumber(clickedPredefinedBox.Number);
             }
 
             InformAboutClickedSudokuBox?.Invoke(clickedSudokuBox);
             MarkDuplicatedNumbersRequested?.Invoke();
+        }
+
+        private void AdaptCurrentCoordinates(SudokuBoxCoordinate parentCoordinate, SudokuBoxCoordinate childCoordinate)
+        {
+            mCurrentChildCoordinate = childCoordinate;
+            mCurrentParentCoordinate = parentCoordinate;
         }
     }
 }

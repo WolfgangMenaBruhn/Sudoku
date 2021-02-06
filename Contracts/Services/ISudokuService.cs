@@ -84,5 +84,7 @@ namespace Sudoku.Contracts.Services
         event SudokuService.ExistentNumbersDelegate ExistentNumbersRequested;
 
         event SudokuService.ModeChangedDelegate ModeChanged;
+
+        event SudokuService.PredefinedNumberChangedDelegate PredefinedNumberChanged;
     }
 }

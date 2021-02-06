@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Catel.MVVM;
 using Sudoku.Contracts.Models;
 using Sudoku.Contracts.Services;
@@ -16,6 +17,15 @@ namespace Sudoku.ViewModels
         {
             Model = model ?? throw new ArgumentNullException(nameof(model));
             mSudokuService = sudokuService;
+
+            mSudokuService.PredefinedNumberChanged += OnPredefinedNumberChanged;
+        }
+
+        private void OnPredefinedNumberChanged(SudokuBoxNumbers? predefinedNumber)
+        {
+            if (!Model.IsForControl) return;
+            
+            IsSelected = predefinedNumber.HasValue && predefinedNumber.Value == Model.Number;
         }
 
         [Model]
@@ -93,6 +103,12 @@ namespace Sudoku.ViewModels
             RaisePropertyChanged(nameof(IsDirectDuplicated));
             RaisePropertyChanged(nameof(IsIndirectDuplicated));
             RaisePropertyChanged(nameof(IsDuplicated));
+        }
+
+        protected override Task CloseAsync()
+        {
+            mSudokuService.PredefinedNumberChanged -= OnPredefinedNumberChanged;
+            return base.CloseAsync();
         }
     }
 }
