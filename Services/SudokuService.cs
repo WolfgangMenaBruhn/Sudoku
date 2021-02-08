@@ -150,6 +150,7 @@ namespace Sudoku.Services
 
         public void SetMode(ControlSudokuMode mode)
         {
+            if (mode == Mode) return;
             Mode = mode;
             ModeChanged?.Invoke(mode);
         }
@@ -264,7 +265,10 @@ namespace Sudoku.Services
             }
 
             // Change to user defining mode if clicked on predefined number in note mode
-            if (clickedPredefinedBox != null && !clickedPredefinedBox.IsForControl && Mode.HasValue && Mode.Value == ControlSudokuMode.Notes)
+            if (clickedPredefinedBox != null && 
+                !clickedPredefinedBox.IsForControl && 
+                Mode.HasValue && 
+                (Mode.Value == ControlSudokuMode.Notes || Mode.Value == ControlSudokuMode.UserDefining))
             {
                 SetMode(ControlSudokuMode.UserDefining);
                 SetPredefinedNumber(clickedPredefinedBox.Number);
