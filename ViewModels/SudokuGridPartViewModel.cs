@@ -40,6 +40,39 @@ namespace Sudoku.ViewModels
             mSudokuService.RefreshNotesRequested += OnRefreshUserNotesRequested;
         }
 
+        public void CheckUniqueNoteNumbers()
+        {
+            var allNoteNumbers = GetAllNoteNumbers();
+
+            var uniqueNumbers =
+                allNoteNumbers
+                    .GroupBy(n => n)
+                    .Where(g => g.Count() == 1)
+                    .Select(x => x.Key)
+                    .ToList();
+
+            foreach (var viewModel in mSudokuBoxViewModels)
+            {
+                if (!(viewModel is NoteSudokuBoxViewModel noteViewModel)) continue;
+
+                noteViewModel.SelectNumbers(uniqueNumbers);
+            }
+        }
+
+        public IEnumerable<SudokuBoxNumbers> GetAllNoteNumbers()
+        {
+            var result = new List<SudokuBoxNumbers>();
+
+            foreach (var viewModel in mSudokuBoxViewModels)
+            {
+                if (!(viewModel is NoteSudokuBoxViewModel noteViewModel)) continue;
+
+                result.AddRange(noteViewModel.Numbers);
+            }
+
+            return result;
+        }
+
         private void OnChangeNotesToUserDefinedRequest(
             INoteSudokuBox notesBox)
         {
@@ -101,6 +134,7 @@ namespace Sudoku.ViewModels
             mSudokuBoxViewModels.Insert(viewModelIndex, newNoteViewModel);
 
             RefreshValues();
+            CheckUniqueNoteNumbers();
         }
 
         private void OnRefreshUserNotesRequested()
@@ -126,6 +160,8 @@ namespace Sudoku.ViewModels
 
                 noteViewModel.SetNumbers(remainingNumbers);
             }
+
+            CheckUniqueNoteNumbers();
         }
 
         private void CheckSudokuBoxes()

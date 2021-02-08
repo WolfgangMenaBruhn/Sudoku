@@ -27,6 +27,8 @@ namespace Sudoku.ViewModels
             set => mModel = value;
         }
 
+        public IEnumerable<SudokuBoxNumbers> Numbers => Model.Numbers;
+
         public string NumberOne => Model.Numbers.Contains(Models.SudokuBoxNumbers.One) ? "1" : string.Empty;
         public string NumberTwo => Model.Numbers.Contains(Models.SudokuBoxNumbers.Two) ? "2" : string.Empty;
         public string NumberThree => Model.Numbers.Contains(Models.SudokuBoxNumbers.Three) ? "3" : string.Empty;
@@ -268,6 +270,57 @@ namespace Sudoku.ViewModels
             RefreshValues();
         }
 
+        public bool NumberOneIsSelected { get; protected set; }
+        public bool NumberTwoIsSelected { get; protected set; }
+        public bool NumberThreeIsSelected { get; protected set; }
+        public bool NumberFourIsSelected { get; protected set; }
+        public bool NumberFiveIsSelected { get; protected set; }
+        public bool NumberSixIsSelected { get; protected set; }
+        public bool NumberSevenIsSelected { get; protected set; }
+        public bool NumberEightIsSelected { get; protected set; }
+        public bool NumberNineIsSelected { get; protected set; }
+
+        public void SelectNumbers(IEnumerable<SudokuBoxNumbers> numbers)
+        {
+            foreach (var number in numbers)
+            {
+                if (!(Numbers.Contains(number))) continue;
+
+                switch (number)
+                {
+                    case SudokuBoxNumbers.One:
+                        NumberOneIsSelected = true;
+                        break;
+                    case SudokuBoxNumbers.Two:
+                        NumberTwoIsSelected = true;
+                        break;
+                    case SudokuBoxNumbers.Three:
+                        NumberThreeIsSelected = true;
+                        break;
+                    case SudokuBoxNumbers.Four:
+                        NumberFourIsSelected = true;
+                        break;
+                    case SudokuBoxNumbers.Five:
+                        NumberFiveIsSelected = true;
+                        break;
+                    case SudokuBoxNumbers.Six:
+                        NumberSixIsSelected = true;
+                        break;
+                    case SudokuBoxNumbers.Seven:
+                        NumberSevenIsSelected = true;
+                        break;
+                    case SudokuBoxNumbers.Eight:
+                        NumberEightIsSelected = true;
+                        break;
+                    case SudokuBoxNumbers.Nine:
+                        NumberNineIsSelected = true;
+                        break;
+                }
+            }
+
+            RefreshValues();
+        }
+
         private new void RefreshValues()
         {
             RaisePropertyChanged(nameof(NumberOne));
@@ -279,6 +332,16 @@ namespace Sudoku.ViewModels
             RaisePropertyChanged(nameof(NumberSeven));
             RaisePropertyChanged(nameof(NumberEight));
             RaisePropertyChanged(nameof(NumberNine));
+
+            RaisePropertyChanged(nameof(NumberOneIsSelected));
+            RaisePropertyChanged(nameof(NumberTwoIsSelected));
+            RaisePropertyChanged(nameof(NumberThreeIsSelected));
+            RaisePropertyChanged(nameof(NumberFourIsSelected));
+            RaisePropertyChanged(nameof(NumberFiveIsSelected));
+            RaisePropertyChanged(nameof(NumberSixIsSelected));
+            RaisePropertyChanged(nameof(NumberSevenIsSelected));
+            RaisePropertyChanged(nameof(NumberEightIsSelected));
+            RaisePropertyChanged(nameof(NumberNineIsSelected));
             base.RefreshValues();
         }
     }

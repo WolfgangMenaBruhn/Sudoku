@@ -15,17 +15,116 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Row="0" Grid.Column="0" Content="{Binding NumberOne}" Command="{Binding ClickNumberOneCommand}" />
-            <Button Grid.Row="0" Grid.Column="1" Content="{Binding NumberTwo}" Command="{Binding ClickNumberTwoCommand}" />
-            <Button Grid.Row="0" Grid.Column="2" Content="{Binding NumberThree}" Command="{Binding ClickNumberThreeCommand}" />
+            <Button Grid.Row="0" Grid.Column="0" Content="{Binding NumberOne}" Command="{Binding ClickNumberOneCommand}" >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=NumberOneIsSelected}" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="1" Content="{Binding NumberTwo}" Command="{Binding ClickNumberTwoCommand}" >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=NumberTwoIsSelected}" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="2" Content="{Binding NumberThree}" Command="{Binding ClickNumberThreeCommand}" >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=NumberThreeIsSelected}" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
 
-            <Button Grid.Row="1" Grid.Column="0" Content="{Binding NumberFour}" Command="{Binding ClickNumberFourCommand}" />
-            <Button Grid.Row="1" Grid.Column="1" Content="{Binding NumberFive}" Command="{Binding ClickNumberFiveCommand}" />
-            <Button Grid.Row="1" Grid.Column="2" Content="{Binding NumberSix}" Command="{Binding ClickNumberSixCommand}" />
+            <Button Grid.Row="1" Grid.Column="0" Content="{Binding NumberFour}" Command="{Binding ClickNumberFourCommand}" >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=NumberFourIsSelected}" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="1" Content="{Binding NumberFive}" Command="{Binding ClickNumberFiveCommand}" >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=NumberFiveIsSelected}" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="2" Content="{Binding NumberSix}" Command="{Binding ClickNumberSixCommand}" >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=NumberSixIsSelected}" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
 
-            <Button Grid.Row="2" Grid.Column="0" Content="{Binding NumberSeven}" Command="{Binding ClickNumberSevenCommand}" />
-            <Button Grid.Row="2" Grid.Column="1" Content="{Binding NumberEight}" Command="{Binding ClickNumberEightCommand}" />
-            <Button Grid.Row="2" Grid.Column="2" Content="{Binding NumberNine}" Command="{Binding ClickNumberNineCommand}" />
+            <Button Grid.Row="2" Grid.Column="0" Content="{Binding NumberSeven}" Command="{Binding ClickNumberSevenCommand}" >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=NumberSevenIsSelected}" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Grid.Row="2" Grid.Column="1" Content="{Binding NumberEight}" Command="{Binding ClickNumberEightCommand}" >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=NumberEightIsSelected}" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Grid.Row="2" Grid.Column="2" Content="{Binding NumberNine}" Command="{Binding ClickNumberNineCommand}" >
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=NumberNineIsSelected}" Value="True">
+                                <Setter Property="Background" Value="Green" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </Grid>
     </Border>
 
