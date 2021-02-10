@@ -81,7 +81,7 @@ namespace Sudoku.ViewModels
 
         private void ExecuteKey0Command()
         {
-            mSudokuService.ConsiderControlPressedKey(null);
+            mSudokuService.ConsiderSudokuControlPressedKey(null);
         }
 
         #endregion
@@ -99,7 +99,7 @@ namespace Sudoku.ViewModels
 
         private void ExecuteKey1Command()
         {
-            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.One);
+            mSudokuService.ConsiderSudokuControlPressedKey(Models.SudokuBoxNumbers.One);
         }
 
         #endregion
@@ -117,7 +117,7 @@ namespace Sudoku.ViewModels
 
         private void ExecuteKey2Command()
         {
-            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Two);
+            mSudokuService.ConsiderSudokuControlPressedKey(Models.SudokuBoxNumbers.Two);
         }
 
         #endregion
@@ -135,7 +135,7 @@ namespace Sudoku.ViewModels
 
         private void ExecuteKey3Command()
         {
-            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Three);
+            mSudokuService.ConsiderSudokuControlPressedKey(Models.SudokuBoxNumbers.Three);
         }
 
         #endregion
@@ -153,7 +153,7 @@ namespace Sudoku.ViewModels
 
         private void ExecuteKey4Command()
         {
-            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Four);
+            mSudokuService.ConsiderSudokuControlPressedKey(Models.SudokuBoxNumbers.Four);
         }
 
         #endregion
@@ -171,7 +171,7 @@ namespace Sudoku.ViewModels
 
         private void ExecuteKey5Command()
         {
-            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Five);
+            mSudokuService.ConsiderSudokuControlPressedKey(Models.SudokuBoxNumbers.Five);
         }
 
         #endregion
@@ -189,7 +189,7 @@ namespace Sudoku.ViewModels
 
         private void ExecuteKey6Command()
         {
-            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Six);
+            mSudokuService.ConsiderSudokuControlPressedKey(Models.SudokuBoxNumbers.Six);
         }
 
         #endregion
@@ -207,7 +207,7 @@ namespace Sudoku.ViewModels
 
         private void ExecuteKey7Command()
         {
-            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Seven);
+            mSudokuService.ConsiderSudokuControlPressedKey(Models.SudokuBoxNumbers.Seven);
         }
 
         #endregion
@@ -225,7 +225,7 @@ namespace Sudoku.ViewModels
 
         private void ExecuteKey8Command()
         {
-            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Eight);
+            mSudokuService.ConsiderSudokuControlPressedKey(Models.SudokuBoxNumbers.Eight);
         }
 
         #endregion
@@ -243,7 +243,7 @@ namespace Sudoku.ViewModels
 
         private void ExecuteKey9Command()
         {
-            mSudokuService.ConsiderControlPressedKey(Models.SudokuBoxNumbers.Nine);
+            mSudokuService.ConsiderSudokuControlPressedKey(Models.SudokuBoxNumbers.Nine);
         }
 
         #endregion

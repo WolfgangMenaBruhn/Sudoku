@@ -40,37 +40,77 @@ namespace Sudoku.ViewModels
             mSudokuService.RefreshNotesRequested += OnRefreshUserNotesRequested;
         }
 
-        public void CheckUniqueNoteNumbers()
+        public void SelectSingleAndUniqueNoteNumbers(IEnumerable<NoteSudokuBoxViewModel> viewModels)
         {
-            var allNoteNumbers = GetAllNoteNumbers();
+            bool singleNumberHasBeenRemoved;            
+            var viewModelsList = viewModels.ToList();
 
-            var uniqueNumbers =
-                allNoteNumbers
+            do
+            {
+                singleNumberHasBeenRemoved = false;
+                var singleNoteNumbers = GetAllSingleNoteNumbers(viewModelsList).ToList();
+                var uniqueNoteNumbers = GetAllUniqueNoteNumbers(viewModelsList).Except(singleNoteNumbers).ToList();
+
+                foreach (var viewModel in viewModelsList)
+                {
+                    singleNumberHasBeenRemoved = singleNumberHasBeenRemoved || viewModel.RemoveSingleNumbers(singleNoteNumbers);
+                    viewModel.SelectUniqueNumbers(uniqueNoteNumbers);
+                    viewModel.SelectSingleNumber(singleNoteNumbers);
+                }
+
+            } while (singleNumberHasBeenRemoved);
+        }
+
+        public IEnumerable<NoteSudokuBoxViewModel> GetAllNoteViewModels()
+        {
+            var result = new List<NoteSudokuBoxViewModel>();
+
+            foreach (var viewModel in mSudokuBoxViewModels)
+            {
+                if (!(viewModel is NoteSudokuBoxViewModel noteViewModel)) continue;
+                result.Add(noteViewModel);
+            }
+
+            return result;
+        }
+
+        private IEnumerable<SudokuBoxNumbers> GetAllUniqueNoteNumbers(IEnumerable<BaseSudokuBoxViewModel> viewModels)
+        {
+            return
+                GetAllNoteNumbers(viewModels)
+                    .ToList()
                     .GroupBy(n => n)
                     .Where(g => g.Count() == 1)
                     .Select(x => x.Key)
                     .ToList();
-
-            foreach (var viewModel in mSudokuBoxViewModels)
-            {
-                if (!(viewModel is NoteSudokuBoxViewModel noteViewModel)) continue;
-
-                noteViewModel.SelectNumbers(uniqueNumbers);
-            }
         }
 
-        public IEnumerable<SudokuBoxNumbers> GetAllNoteNumbers()
+        private IEnumerable<SudokuBoxNumbers> GetAllSingleNoteNumbers(IEnumerable<BaseSudokuBoxViewModel> viewModels)
         {
             var result = new List<SudokuBoxNumbers>();
 
-            foreach (var viewModel in mSudokuBoxViewModels)
+            foreach (var viewModel in viewModels)
             {
                 if (!(viewModel is NoteSudokuBoxViewModel noteViewModel)) continue;
-
-                result.AddRange(noteViewModel.Numbers);
+                var numbers = noteViewModel.Numbers.ToList();
+                if (numbers.Count == 1) result.Add(numbers.First());
             }
 
             return result;
+        }
+
+        private IEnumerable<SudokuBoxNumbers> GetAllNoteNumbers(IEnumerable<BaseSudokuBoxViewModel> viewModels)
+        {
+            var allNumbers = new List<SudokuBoxNumbers>();
+
+            foreach (var viewModel in viewModels)
+            {
+                if (!(viewModel is NoteSudokuBoxViewModel noteViewModel)) continue;
+
+                allNumbers.AddRange(noteViewModel.Numbers);
+            }
+
+            return allNumbers;
         }
 
         private void OnChangeNotesToUserDefinedRequest(
@@ -134,7 +174,7 @@ namespace Sudoku.ViewModels
             mSudokuBoxViewModels.Insert(viewModelIndex, newNoteViewModel);
 
             RefreshValues();
-            CheckUniqueNoteNumbers();
+            SelectSingleAndUniqueNoteNumbers(GetAllNoteViewModels());
         }
 
         private void OnRefreshUserNotesRequested()
@@ -145,11 +185,11 @@ namespace Sudoku.ViewModels
 
                 var model = noteViewModel.Model;
 
-                var numberInSameGrid =
+                var numbersInSameGrid =
                     GetAllNumbers((model.ParentCoordinate, model.Coordinate));
 
                 var remainingNumbers =
-                    mModelsFactoryService.SudokuNumbers().Except(numberInSameGrid);
+                    mModelsFactoryService.SudokuNumbers().Except(numbersInSameGrid);
 
                 var numbersInOtherGrids =
                     mSudokuService.GetExistentNumbers(
@@ -161,7 +201,7 @@ namespace Sudoku.ViewModels
                 noteViewModel.SetNumbers(remainingNumbers);
             }
 
-            CheckUniqueNoteNumbers();
+            SelectSingleAndUniqueNoteNumbers(GetAllNoteViewModels());
         }
 
         private void CheckSudokuBoxes()
@@ -540,8 +580,14 @@ namespace Sudoku.ViewModels
 
         #endregion
 
+        private bool mIsRefreshing;
+        
         private void RefreshValues()
         {
+            if (mIsRefreshing) return;
+
+            mIsRefreshing = true;
+
             RaisePropertyChanged(nameof(ViewBoxModel_1));
             RaisePropertyChanged(nameof(ViewBoxModel_2));
             RaisePropertyChanged(nameof(ViewBoxModel_3));
@@ -551,6 +597,8 @@ namespace Sudoku.ViewModels
             RaisePropertyChanged(nameof(ViewBoxModel_7));
             RaisePropertyChanged(nameof(ViewBoxModel_8));
             RaisePropertyChanged(nameof(ViewBoxModel_9));
+
+            mIsRefreshing = false;
         }
 
         public override string Title => "View model title";

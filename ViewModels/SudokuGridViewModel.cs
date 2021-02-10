@@ -30,6 +30,58 @@ namespace Sudoku.ViewModels
             mSudokuService.MarkDuplicatedNumbersRequested += OnMarkDuplicatedNumbersRequested;
             mSudokuService.CheckForFinishedRequested += OnCheckForFinishedRequested;
             mSudokuService.ExistentNumbersRequested += OnGetExistentNumbersRequested;
+            mSudokuService.RefreshNotesRequested += OnRefreshNotesRequested;
+        }
+
+        private void OnRefreshNotesRequested()
+        {
+            SelectSingleAndUniqueNoteNumbers();
+        }
+
+        private void SelectSingleAndUniqueNoteNumbers()
+        {
+            var allNoteViewModels = new List<NoteSudokuBoxViewModel>();
+
+            foreach (var gridPartViewModel in mSudokuBoxViewModels)
+                allNoteViewModels.AddRange(gridPartViewModel.GetAllNoteViewModels());
+
+            if (allNoteViewModels.Any()) return;
+
+            var horizontalNoteViewModels = new List<NoteSudokuBoxViewModel>();
+            var verticalNoteViewModels = new List<NoteSudokuBoxViewModel>();
+
+            foreach (var currentNoteViewModel in allNoteViewModels)
+            {
+                horizontalNoteViewModels.Clear();
+                verticalNoteViewModels.Clear();
+
+                foreach (var otherCurrentNoteViewModel in allNoteViewModels)
+                {
+                    if (otherCurrentNoteViewModel.Model.ParentCoordinate.Equals(currentNoteViewModel.Model.ParentCoordinate) &&
+                        otherCurrentNoteViewModel.Model.Coordinate.Equals(currentNoteViewModel.Model.Coordinate))
+                        continue;
+
+                    if (otherCurrentNoteViewModel.Model.ParentCoordinate.X == currentNoteViewModel.Model.ParentCoordinate.X &&
+                        otherCurrentNoteViewModel.Model.Coordinate.X == currentNoteViewModel.Model.Coordinate.X)
+                        horizontalNoteViewModels.Add(otherCurrentNoteViewModel);
+
+                    if (otherCurrentNoteViewModel.Model.ParentCoordinate.Y == currentNoteViewModel.Model.ParentCoordinate.Y &&
+                        otherCurrentNoteViewModel.Model.Coordinate.Y == currentNoteViewModel.Model.Coordinate.Y)
+                        verticalNoteViewModels.Add(otherCurrentNoteViewModel);
+                }
+
+                if (horizontalNoteViewModels.Any())
+                {
+                    horizontalNoteViewModels.Add(currentNoteViewModel);
+                    mSudokuBoxViewModels.First().SelectSingleAndUniqueNoteNumbers(horizontalNoteViewModels);
+                }
+
+                if (verticalNoteViewModels.Any())
+                {
+                    verticalNoteViewModels.Add(currentNoteViewModel);
+                    mSudokuBoxViewModels.First().SelectSingleAndUniqueNoteNumbers(verticalNoteViewModels);
+                }
+            }
         }
 
         private IEnumerable<SudokuBoxNumbers> OnGetExistentNumbersRequested(
@@ -177,6 +229,7 @@ namespace Sudoku.ViewModels
             mSudokuService.MarkDuplicatedNumbersRequested -= OnMarkDuplicatedNumbersRequested;
             mSudokuService.CheckForFinishedRequested -= OnCheckForFinishedRequested;
             mSudokuService.ExistentNumbersRequested -= OnGetExistentNumbersRequested;
+            mSudokuService.RefreshNotesRequested -= OnRefreshNotesRequested;
             await base.CloseAsync();
         }
     }

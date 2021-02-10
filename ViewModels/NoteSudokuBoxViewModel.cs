@@ -280,49 +280,106 @@ namespace Sudoku.ViewModels
         public bool NumberEightIsSelected { get; protected set; }
         public bool NumberNineIsSelected { get; protected set; }
 
-        public void SelectNumbers(IEnumerable<SudokuBoxNumbers> numbers)
+        public void SelectSingleNumber(IEnumerable<SudokuBoxNumbers> numbers)
         {
-            foreach (var number in numbers)
-            {
-                if (!(Numbers.Contains(number))) continue;
+            if (Numbers.Count() != 1 || !numbers.Contains(Numbers.First())) return;
+            SelectNumber(Numbers.First(), true);
+        }
 
-                switch (number)
-                {
-                    case SudokuBoxNumbers.One:
-                        NumberOneIsSelected = true;
-                        break;
-                    case SudokuBoxNumbers.Two:
-                        NumberTwoIsSelected = true;
-                        break;
-                    case SudokuBoxNumbers.Three:
-                        NumberThreeIsSelected = true;
-                        break;
-                    case SudokuBoxNumbers.Four:
-                        NumberFourIsSelected = true;
-                        break;
-                    case SudokuBoxNumbers.Five:
-                        NumberFiveIsSelected = true;
-                        break;
-                    case SudokuBoxNumbers.Six:
-                        NumberSixIsSelected = true;
-                        break;
-                    case SudokuBoxNumbers.Seven:
-                        NumberSevenIsSelected = true;
-                        break;
-                    case SudokuBoxNumbers.Eight:
-                        NumberEightIsSelected = true;
-                        break;
-                    case SudokuBoxNumbers.Nine:
-                        NumberNineIsSelected = true;
-                        break;
-                }
+        public bool RemoveSingleNumbers(IEnumerable<SudokuBoxNumbers> singleNumbers)
+        {
+            if (Numbers.Count() <= 1) return false;
+
+            var numberWasRemoved = false;
+            var resultingNumbers = new List<SudokuBoxNumbers>(Numbers);
+
+            foreach (var singleNumber in singleNumbers)
+            {
+                if (!Numbers.Contains(singleNumber)) continue;
+                SelectNumber(singleNumber, false);
+                resultingNumbers.Remove(singleNumber);
+                numberWasRemoved = true;
+            }
+
+            if (numberWasRemoved)
+                SetNumbers(resultingNumbers);
+
+            return numberWasRemoved;
+        }
+
+        public bool CorrectWithUniqueNumbers(IEnumerable<SudokuBoxNumbers> uniqueNumbers)
+        {
+            if (uniqueNumbers == null) return false;
+            // ReSharper disable once PossibleMultipleEnumeration
+            var uniqueNumbersList = uniqueNumbers.ToList();
+            if (!uniqueNumbersList.Any()) return false;
+
+            var resultingNumbers = new List<SudokuBoxNumbers>(Numbers);
+
+            var foundExistentUniqueNumbers = resultingNumbers.Where(n => uniqueNumbersList.Contains(n)).ToList();
+            if (foundExistentUniqueNumbers.Count() > 1) return false;
+            if (!foundExistentUniqueNumbers.Any()) return false;
+
+            SetNumbers(new List<SudokuBoxNumbers> { foundExistentUniqueNumbers.First() });
+            return true;
+        }
+
+        public void SelectUniqueNumbers(IEnumerable<SudokuBoxNumbers> numbers)
+        {
+            var numbersList = numbers.ToList();
+
+            foreach (var number in Numbers)
+            {
+                SelectNumber(number, numbersList.Contains(number));
             }
 
             RefreshValues();
         }
 
+        private void SelectNumber(SudokuBoxNumbers number, bool isSelected)
+        {
+            switch (number)
+            {
+                case SudokuBoxNumbers.One:
+                    NumberOneIsSelected = isSelected && Numbers.Contains(number);
+                    break;
+                case SudokuBoxNumbers.Two:
+                    NumberTwoIsSelected = isSelected && Numbers.Contains(number);
+                    break;
+                case SudokuBoxNumbers.Three:
+                    NumberThreeIsSelected = isSelected && Numbers.Contains(number);
+                    break;
+                case SudokuBoxNumbers.Four:
+                    NumberFourIsSelected = isSelected && Numbers.Contains(number);
+                    break;
+                case SudokuBoxNumbers.Five:
+                    NumberFiveIsSelected = isSelected && Numbers.Contains(number);
+                    break;
+                case SudokuBoxNumbers.Six:
+                    NumberSixIsSelected = isSelected && Numbers.Contains(number);
+                    break;
+                case SudokuBoxNumbers.Seven:
+                    NumberSevenIsSelected = isSelected && Numbers.Contains(number);
+                    break;
+                case SudokuBoxNumbers.Eight:
+                    NumberEightIsSelected = isSelected && Numbers.Contains(number);
+                    break;
+                case SudokuBoxNumbers.Nine:
+                    NumberNineIsSelected = isSelected && Numbers.Contains(number);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(number), number, null);
+            }
+        }
+
+        private bool mIsRefreshing;
+        
         private new void RefreshValues()
         {
+            if (mIsRefreshing) return;
+
+            mIsRefreshing = true;
+
             RaisePropertyChanged(nameof(NumberOne));
             RaisePropertyChanged(nameof(NumberTwo));
             RaisePropertyChanged(nameof(NumberThree));
@@ -343,6 +400,10 @@ namespace Sudoku.ViewModels
             RaisePropertyChanged(nameof(NumberEightIsSelected));
             RaisePropertyChanged(nameof(NumberNineIsSelected));
             base.RefreshValues();
+
+            // mSudokuService.CheckForFinished(); // Only for testing
+
+            mIsRefreshing = false;
         }
     }
 }

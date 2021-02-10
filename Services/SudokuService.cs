@@ -101,7 +101,7 @@ namespace Sudoku.Services
             RefreshNotesRequested?.Invoke();
         }
 
-        public void ConsiderControlPressedKey(SudokuBoxNumbers? number)
+        public void ConsiderSudokuControlPressedKey(SudokuBoxNumbers? number)
         {
             try
             {
@@ -199,6 +199,7 @@ namespace Sudoku.Services
             if (userFilledSudokuBox == null) return;
 
             ChangeUserDefinedToNotesRequested?.Invoke(userFilledSudokuBox);
+            RefreshNotesRequested?.Invoke();
         }
 
         public void ChangeNotesToUserDefined(
